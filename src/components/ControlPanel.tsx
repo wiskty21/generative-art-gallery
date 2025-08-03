@@ -36,6 +36,31 @@ export default function ControlPanel({ mode }: ControlPanelProps) {
     }
   }
 
+  const handleSaveImage = () => {
+    // Trigger save image in the current p5.js sketch
+    if (typeof window.currentP5Instance !== 'undefined' && window.currentP5Instance) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const p5Instance = window.currentP5Instance as any
+      if (typeof p5Instance.saveCanvas === 'function') {
+        p5Instance.saveCanvas(`${mode}_${Date.now()}`, 'png')
+      }
+    }
+  }
+
+  const handleReset = () => {
+    // Trigger reset in the current p5.js sketch
+    if (typeof window.currentP5Instance !== 'undefined' && window.currentP5Instance) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const p5Instance = window.currentP5Instance as any
+      if (typeof p5Instance.key !== 'undefined') {
+        p5Instance.key = 'r'
+        if (typeof p5Instance.keyPressed === 'function') {
+          p5Instance.keyPressed()
+        }
+      }
+    }
+  }
+
   const getParameters = () => {
     switch (mode) {
       case 'gray_scott':
@@ -584,10 +609,16 @@ export default function ControlPanel({ mode }: ControlPanelProps) {
       <div className="border-t border-gray-700 pt-4">
         <h3 className="text-lg font-semibold mb-2">Controls</h3>
         <div className="space-y-2">
-          <button className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition-colors">
+          <button 
+            onClick={handleReset}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded transition-colors"
+          >
             Reset
           </button>
-          <button className="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded transition-colors">
+          <button 
+            onClick={handleSaveImage}
+            className="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded transition-colors"
+          >
             Save Image
           </button>
         </div>
