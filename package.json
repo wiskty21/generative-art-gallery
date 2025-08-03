@@ -1,0 +1,12 @@
+{
+  "name": "generative-art",
+  "version": "1.0.0",
+  "description": "Generative Art with p5.js",
+  "scripts": {
+    "start": "live-server --port=8080",
+    "dev": "live-server --port=8080 --watch=*.js,*.html"
+  },
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  }
+}
