@@ -28,20 +28,20 @@ let mandelbrotPalette = [];
 
 // Ornstein-Uhlenbeck用変数
 let ouPaths = [];
-let ouNumPaths = 50;
-let ouTheta = 0.1; // 回帰速度
-let ouSigma = 0.3; // ノイズ強度
+let ouNumPaths = 30;
+let ouTheta = 0.15; // 回帰速度
+let ouSigma = 0.4; // ノイズ強度
 let ouMu = 0; // 平均回帰値
 
 // Gray-Scott用変数
 let gsGrid = [];
 let gsNextGrid = [];
 let gsWidth, gsHeight;
-let gsFeedRate = 0.037; // より興味深いパターンのための調整
-let gsKillRate = 0.06;
+let gsFeedRate = 0.055; // スポット成長パターン
+let gsKillRate = 0.062;
 let gsDiffusionA = 1.0;
 let gsDiffusionB = 0.5;
-let gsDt = 0.8; // 時間刻み幅（安定性のため小さく）
+let gsDt = 1.0; // 時間刻み幅
 
 function setup() {
   const canvas = createCanvas(800, 800);
@@ -84,16 +84,17 @@ function initializeSketch() {
     ouPaths = [];
     for (let i = 0; i < ouNumPaths; i++) {
       ouPaths.push({
-        x: width / 2,
-        y: height / 2,
-        value: 0,
+        x: random(width * 0.3, width * 0.7),
+        y: random(height * 0.3, height * 0.7),
+        vx: 0, // X方向の値
+        vy: 0, // Y方向の値
         trail: []
       });
     }
   } else if (currentMode === 'gray_scott') {
     colorMode(RGB, 255);
-    gsWidth = 256; // 2の累乗で効率化
-    gsHeight = 256;
+    gsWidth = 200; // 解像度を少し下げて安定性向上
+    gsHeight = 200;
     initializeGrayScott();
   }
 }
@@ -251,8 +252,8 @@ function mouseMoved() {
     lengthRatio = map(mouseY, 0, height, 0.5, 0.7); // 0.8から0.7に減少
   } else if (currentMode === 'ornstein_uhlenbeck') {
     // パラメータをマウス位置で調整
-    ouTheta = map(mouseX, 0, width, 0.01, 0.5);
-    ouSigma = map(mouseY, 0, height, 0.1, 1.0);
+    ouTheta = map(mouseX, 0, width, 0.05, 0.3);
+    ouSigma = map(mouseY, 0, height, 0.2, 0.8);
   }
 }
 
@@ -288,9 +289,10 @@ function keyPressed() {
   } else if (currentMode === 'ornstein_uhlenbeck') {
     if (key === 'r' || key === 'R') {
       for (let path of ouPaths) {
-        path.x = width / 2;
-        path.y = height / 2;
-        path.value = 0;
+        path.x = random(width * 0.3, width * 0.7);
+        path.y = random(height * 0.3, height * 0.7);
+        path.vx = 0;
+        path.vy = 0;
         path.trail = [];
       }
       background(0);
@@ -457,44 +459,52 @@ function drawMandelbrot() {
 // Ornstein-Uhlenbeck過程の描画
 function drawOrnsteinUhlenbeck() {
   // 背景を少しずつフェード
-  fill(0, 15);
+  fill(0, 20);
   noStroke();
   rect(0, 0, width, height);
   
   for (let i = 0; i < ouPaths.length; i++) {
     let path = ouPaths[i];
     
-    // Ornstein-Uhlenbeck過程の更新（時間刻み幅を小さく）
-    let dt = 0.02; // 時間刻み幅
-    let drift = -ouTheta * path.value * dt;
-    let diffusion = ouSigma * randomGaussian() * sqrt(dt);
-    path.value += drift + diffusion;
+    // 2次元Ornstein-Uhlenbeck過程の更新
+    let dt = 0.016; // 時間刻み幅（約60fps）
     
-    // 値を制限して発散を防ぐ
-    path.value = constrain(path.value, -4, 4);
+    // X方向の更新
+    let driftX = -ouTheta * path.vx * dt;
+    let diffusionX = ouSigma * randomGaussian() * sqrt(dt);
+    path.vx += driftX + diffusionX;
+    path.vx = constrain(path.vx, -3, 3);
     
-    // 位置の更新（より滑らかに）
-    path.x += random(-1, 1);
-    path.y += path.value * 3; // スケールを小さく
+    // Y方向の更新
+    let driftY = -ouTheta * path.vy * dt;
+    let diffusionY = ouSigma * randomGaussian() * sqrt(dt);
+    path.vy += driftY + diffusionY;
+    path.vy = constrain(path.vy, -3, 3);
     
-    // 境界で反射（ラップではなく）
+    // 位置の更新
+    path.x += path.vx * 8;
+    path.y += path.vy * 8;
+    
+    // 境界で反射
     if (path.x < 0) {
       path.x = 0;
+      path.vx = -path.vx * 0.8; // 減衰を伴う反射
     } else if (path.x > width) {
       path.x = width;
+      path.vx = -path.vx * 0.8;
     }
     
     if (path.y < 0) {
       path.y = 0;
-      path.value = abs(path.value) * 0.5; // 反射時に値を調整
+      path.vy = -path.vy * 0.8;
     } else if (path.y > height) {
       path.y = height;
-      path.value = -abs(path.value) * 0.5; // 反射時に値を調整
+      path.vy = -path.vy * 0.8;
     }
     
     // トレイルに追加
-    path.trail.push({x: path.x, y: path.y, value: path.value});
-    if (path.trail.length > 150) {
+    path.trail.push({x: path.x, y: path.y, vx: path.vx, vy: path.vy});
+    if (path.trail.length > 120) {
       path.trail.shift();
     }
     
@@ -502,11 +512,13 @@ function drawOrnsteinUhlenbeck() {
     if (path.trail.length > 1) {
       for (let j = 1; j < path.trail.length; j++) {
         let alpha = map(j, 0, path.trail.length, 0, 1);
-        let currentValue = path.trail[j].value;
-        let hue = map(currentValue, -4, 4, 240, 360);
-        let sat = map(abs(currentValue), 0, 4, 40, 100);
-        stroke(hue, sat, 90, alpha * 120);
-        strokeWeight(map(alpha, 0, 1, 0.5, 3));
+        let speed = sqrt(path.trail[j].vx * path.trail[j].vx + path.trail[j].vy * path.trail[j].vy);
+        let hue = map(speed, 0, 4, 180, 320); // 青から紫へ
+        let sat = map(speed, 0, 4, 60, 100);
+        let brightness = map(alpha, 0, 1, 40, 90);
+        
+        stroke(hue, sat, brightness, alpha * 150);
+        strokeWeight(map(alpha, 0, 1, 0.5, 2.5));
         line(path.trail[j-1].x, path.trail[j-1].y, path.trail[j].x, path.trail[j].y);
       }
     }
@@ -522,28 +534,22 @@ function initializeGrayScott() {
     gsGrid[x] = [];
     gsNextGrid[x] = [];
     for (let y = 0; y < gsHeight; y++) {
-      gsGrid[x][y] = {a: 1, b: 0};
-      gsNextGrid[x][y] = {a: 1, b: 0};
+      gsGrid[x][y] = {a: 1.0, b: 0.0};
+      gsNextGrid[x][y] = {a: 1.0, b: 0.0};
     }
   }
   
-  // 複数の種を異なる場所に配置
-  let seedPositions = [
-    {x: gsWidth/2, y: gsHeight/2},
-    {x: gsWidth/3, y: gsHeight/3},
-    {x: 2*gsWidth/3, y: 2*gsHeight/3},
-    {x: gsWidth/4, y: 3*gsHeight/4}
-  ];
+  // 中央に小さな種を1つ配置（シンプルに）
+  let centerX = floor(gsWidth / 2);
+  let centerY = floor(gsHeight / 2);
   
-  for (let seed of seedPositions) {
-    for (let i = seed.x - 8; i < seed.x + 8; i++) {
-      for (let j = seed.y - 8; j < seed.y + 8; j++) {
-        if (i >= 0 && i < gsWidth && j >= 0 && j < gsHeight) {
-          let dist = sqrt((i - seed.x)*(i - seed.x) + (j - seed.y)*(j - seed.y));
-          if (dist < 8) {
-            gsGrid[i][j].b = random(0.5, 1.0);
-            gsGrid[i][j].a = random(0, 0.5);
-          }
+  for (let i = centerX - 10; i <= centerX + 10; i++) {
+    for (let j = centerY - 10; j <= centerY + 10; j++) {
+      if (i >= 0 && i < gsWidth && j >= 0 && j < gsHeight) {
+        let dist = sqrt((i - centerX)*(i - centerX) + (j - centerY)*(j - centerY));
+        if (dist <= 10) {
+          gsGrid[i][j].a = 0.5;
+          gsGrid[i][j].b = 0.25;
         }
       }
     }
@@ -551,45 +557,50 @@ function initializeGrayScott() {
 }
 
 function drawGrayScott() {
-  // Gray-Scott反応拡散の計算（安定性を考慮した改良版）
-  for (let x = 1; x < gsWidth - 1; x++) {
-    for (let y = 1; y < gsHeight - 1; y++) {
-      let a = gsGrid[x][y].a;
-      let b = gsGrid[x][y].b;
-      
-      // 5点ラプラシアンの計算（より正確）
-      let laplaceA = (gsGrid[x-1][y].a + gsGrid[x+1][y].a + 
-                      gsGrid[x][y-1].a + gsGrid[x][y+1].a - 4*a);
-      let laplaceB = (gsGrid[x-1][y].b + gsGrid[x+1][y].b + 
-                      gsGrid[x][y-1].b + gsGrid[x][y+1].b - 4*b);
-      
-      // Gray-Scott方程式（安定化された形）
-      let reaction = a * b * b;
-      let newA = a + gsDt * (gsDiffusionA * laplaceA - reaction + gsFeedRate * (1 - a));
-      let newB = b + gsDt * (gsDiffusionB * laplaceB + reaction - (gsKillRate + gsFeedRate) * b);
-      
-      // 値の制限（数値的安定性のため）
-      gsNextGrid[x][y].a = constrain(newA, 0, 1);
-      gsNextGrid[x][y].b = constrain(newB, 0, 1);
+  // 複数回の小さなステップで安定性向上
+  let numSteps = 20;
+  let smallDt = gsDt / numSteps;
+  
+  for (let step = 0; step < numSteps; step++) {
+    // Gray-Scott反応拡散の計算
+    for (let x = 1; x < gsWidth - 1; x++) {
+      for (let y = 1; y < gsHeight - 1; y++) {
+        let a = gsGrid[x][y].a;
+        let b = gsGrid[x][y].b;
+        
+        // ラプラシアンの計算
+        let laplaceA = gsGrid[x-1][y].a + gsGrid[x+1][y].a + 
+                       gsGrid[x][y-1].a + gsGrid[x][y+1].a - 4*a;
+        let laplaceB = gsGrid[x-1][y].b + gsGrid[x+1][y].b + 
+                       gsGrid[x][y-1].b + gsGrid[x][y+1].b - 4*b;
+        
+        // Gray-Scott方程式
+        let reaction = a * b * b;
+        let newA = a + smallDt * (gsDiffusionA * laplaceA - reaction + gsFeedRate * (1 - a));
+        let newB = b + smallDt * (gsDiffusionB * laplaceB + reaction - (gsKillRate + gsFeedRate) * b);
+        
+        gsNextGrid[x][y].a = constrain(newA, 0, 1);
+        gsNextGrid[x][y].b = constrain(newB, 0, 1);
+      }
     }
+    
+    // 境界条件（周期境界）
+    for (let x = 0; x < gsWidth; x++) {
+      gsNextGrid[x][0] = gsNextGrid[x][gsHeight-2];
+      gsNextGrid[x][gsHeight-1] = gsNextGrid[x][1];
+    }
+    for (let y = 0; y < gsHeight; y++) {
+      gsNextGrid[0][y] = gsNextGrid[gsWidth-2][y];
+      gsNextGrid[gsWidth-1][y] = gsNextGrid[1][y];
+    }
+    
+    // グリッドの更新
+    let temp = gsGrid;
+    gsGrid = gsNextGrid;
+    gsNextGrid = temp;
   }
   
-  // 境界条件（ゼロフラックス）
-  for (let x = 0; x < gsWidth; x++) {
-    gsNextGrid[x][0] = gsNextGrid[x][1];
-    gsNextGrid[x][gsHeight-1] = gsNextGrid[x][gsHeight-2];
-  }
-  for (let y = 0; y < gsHeight; y++) {
-    gsNextGrid[0][y] = gsNextGrid[1][y];
-    gsNextGrid[gsWidth-1][y] = gsNextGrid[gsWidth-2][y];
-  }
-  
-  // グリッドの更新
-  let temp = gsGrid;
-  gsGrid = gsNextGrid;
-  gsNextGrid = temp;
-  
-  // より美しい描画（カラーマップ改善）
+  // 描画
   loadPixels();
   let scale = width / gsWidth;
   
@@ -598,25 +609,20 @@ function drawGrayScott() {
       let a = gsGrid[x][y].a;
       let b = gsGrid[x][y].b;
       
-      // カラーマッピング（より鮮やかに）
-      let r, g, bl;
-      if (b > 0.1) {
-        // パターンのある領域
-        r = floor(255 * (1 - a) * b * 4);
-        g = floor(255 * b * 2);
-        bl = floor(255 * b * b * 8);
-      } else {
-        // 背景領域
-        r = floor(20 + 50 * a);
-        g = floor(10 + 30 * a);
-        bl = floor(40 + 80 * a);
+      // シンプルなカラーマッピング
+      let intensity = floor(b * 255);
+      let r = intensity;
+      let g = floor(intensity * 0.5);
+      let bl = floor(intensity * 0.3);
+      
+      // 背景色
+      if (b < 0.1) {
+        r = floor(30 + 20 * a);
+        g = floor(10 + 15 * a);  
+        bl = floor(60 + 40 * a);
       }
       
-      r = constrain(r, 0, 255);
-      g = constrain(g, 0, 255);
-      bl = constrain(bl, 0, 255);
-      
-      // ピクセル描画（アンチエイリアシング付き）
+      // ピクセル描画
       for (let dx = 0; dx < scale; dx++) {
         for (let dy = 0; dy < scale; dy++) {
           let px = floor(x * scale + dx);
