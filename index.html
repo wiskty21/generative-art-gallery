@@ -57,8 +57,8 @@
     }
   </script>
 </head>
-<body class="bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-purple-900 transition-all duration-500 min-h-screen">
-  <div class="container mx-auto px-4 py-6 max-w-full">
+<body class="bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-purple-900 transition-all duration-500 min-h-screen overflow-x-hidden">
+  <div class="w-full max-w-screen-2xl mx-auto px-3 sm:px-4 lg:px-6 py-6">
     <!-- Header -->
     <header class="text-center mb-12 relative">
       <div class="absolute inset-0 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 opacity-10 rounded-3xl blur-3xl animate-float"></div>
@@ -88,11 +88,11 @@
     </div>
 
     <!-- Main Layout: Sidebar + Content -->
-    <div class="flex flex-col lg:flex-row gap-4 lg:gap-6">
+    <div class="flex flex-col lg:flex-row gap-4 lg:gap-4">
       <!-- Left Sidebar: Art Selection -->
-      <div class="w-full lg:w-[22rem] xl:w-[26rem] 2xl:w-[30rem] lg:flex-shrink-0 lg:max-w-[35vw]">
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-3">
-      <button onclick="loadSketch('flow_field')" class="group relative overflow-hidden rounded-2xl bg-white/70 dark:bg-gray-800/70 backdrop-blur-md shadow-lg hover:shadow-2xl transition-all duration-500 p-6 sm:p-8 border border-emerald-200/50 dark:border-emerald-700/50 hover:border-emerald-400 dark:hover:border-emerald-500 hover:scale-105 transform min-h-[160px]">
+      <div class="w-full lg:w-80 xl:w-96 lg:flex-shrink-0 lg:min-w-0">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-2 gap-2 sm:gap-3 w-full">
+      <button onclick="loadSketch('flow_field')" class="group relative overflow-hidden rounded-2xl bg-white/70 dark:bg-gray-800/70 backdrop-blur-md shadow-lg hover:shadow-2xl transition-all duration-500 p-4 sm:p-6 border border-emerald-200/50 dark:border-emerald-700/50 hover:border-emerald-400 dark:hover:border-emerald-500 hover:scale-105 transform min-h-[140px]">
         <div class="absolute inset-0 bg-gradient-to-br from-emerald-400 to-cyan-500 opacity-0 group-hover:opacity-20 transition-all duration-500"></div>
         <div class="absolute -top-10 -right-10 w-20 h-20 bg-emerald-400 rounded-full opacity-10 group-hover:opacity-20 group-hover:scale-110 transition-all duration-500"></div>
         <div class="relative z-10">
@@ -105,7 +105,7 @@
         </div>
       </button>
 
-      <button onclick="loadSketch('wave_interference')" class="group relative overflow-hidden rounded-2xl bg-white/70 dark:bg-gray-800/70 backdrop-blur-md shadow-lg hover:shadow-2xl transition-all duration-500 p-6 sm:p-8 border border-purple-200/50 dark:border-purple-700/50 hover:border-purple-400 dark:hover:border-purple-500 hover:scale-105 transform min-h-[160px]">
+      <button onclick="loadSketch('wave_interference')" class="group relative overflow-hidden rounded-2xl bg-white/70 dark:bg-gray-800/70 backdrop-blur-md shadow-lg hover:shadow-2xl transition-all duration-500 p-4 sm:p-6 border border-purple-200/50 dark:border-purple-700/50 hover:border-purple-400 dark:hover:border-purple-500 hover:scale-105 transform min-h-[140px]">
         <div class="absolute inset-0 bg-gradient-to-br from-purple-400 to-pink-500 opacity-0 group-hover:opacity-20 transition-all duration-500"></div>
         <div class="absolute -top-10 -right-10 w-20 h-20 bg-purple-400 rounded-full opacity-10 group-hover:opacity-20 group-hover:scale-110 transition-all duration-500"></div>
         <div class="relative z-10">
@@ -118,7 +118,7 @@
         </div>
       </button>
 
-      <button onclick="loadSketch('recursive_tree')" class="group relative overflow-hidden rounded-2xl bg-white/70 dark:bg-gray-800/70 backdrop-blur-md shadow-lg hover:shadow-2xl transition-all duration-500 p-6 sm:p-8 border border-amber-200/50 dark:border-amber-700/50 hover:border-amber-400 dark:hover:border-amber-500 hover:scale-105 transform min-h-[160px]">
+      <button onclick="loadSketch('recursive_tree')" class="group relative overflow-hidden rounded-2xl bg-white/70 dark:bg-gray-800/70 backdrop-blur-md shadow-lg hover:shadow-2xl transition-all duration-500 p-4 sm:p-6 border border-amber-200/50 dark:border-amber-700/50 hover:border-amber-400 dark:hover:border-amber-500 hover:scale-105 transform min-h-[140px]">
         <div class="absolute inset-0 bg-gradient-to-br from-amber-400 to-orange-500 opacity-0 group-hover:opacity-20 transition-all duration-500"></div>
         <div class="absolute -top-10 -right-10 w-20 h-20 bg-amber-400 rounded-full opacity-10 group-hover:opacity-20 group-hover:scale-110 transition-all duration-500"></div>
         <div class="relative z-10">
@@ -131,7 +131,7 @@
         </div>
       </button>
 
-      <button onclick="loadSketch('harmonic_waves')" class="group relative overflow-hidden rounded-2xl bg-white/70 dark:bg-gray-800/70 backdrop-blur-md shadow-lg hover:shadow-2xl transition-all duration-500 p-6 sm:p-8 border border-cyan-200/50 dark:border-cyan-700/50 hover:border-cyan-400 dark:hover:border-cyan-500 hover:scale-105 transform min-h-[160px]">
+      <button onclick="loadSketch('harmonic_waves')" class="group relative overflow-hidden rounded-2xl bg-white/70 dark:bg-gray-800/70 backdrop-blur-md shadow-lg hover:shadow-2xl transition-all duration-500 p-4 sm:p-6 border border-cyan-200/50 dark:border-cyan-700/50 hover:border-cyan-400 dark:hover:border-cyan-500 hover:scale-105 transform min-h-[140px]">
         <div class="absolute inset-0 bg-gradient-to-br from-cyan-400 to-blue-500 opacity-0 group-hover:opacity-20 transition-all duration-500"></div>
         <div class="absolute -top-10 -right-10 w-20 h-20 bg-cyan-400 rounded-full opacity-10 group-hover:opacity-20 group-hover:scale-110 transition-all duration-500"></div>
         <div class="relative z-10">
@@ -144,7 +144,7 @@
         </div>
       </button>
 
-      <button onclick="loadSketch('polar_rose')" class="group relative overflow-hidden rounded-2xl bg-white/70 dark:bg-gray-800/70 backdrop-blur-md shadow-lg hover:shadow-2xl transition-all duration-500 p-6 sm:p-8 border border-pink-200/50 dark:border-pink-700/50 hover:border-pink-400 dark:hover:border-pink-500 hover:scale-105 transform min-h-[160px]">
+      <button onclick="loadSketch('polar_rose')" class="group relative overflow-hidden rounded-2xl bg-white/70 dark:bg-gray-800/70 backdrop-blur-md shadow-lg hover:shadow-2xl transition-all duration-500 p-4 sm:p-6 border border-pink-200/50 dark:border-pink-700/50 hover:border-pink-400 dark:hover:border-pink-500 hover:scale-105 transform min-h-[140px]">
         <div class="absolute inset-0 bg-gradient-to-br from-pink-400 to-rose-500 opacity-0 group-hover:opacity-20 transition-all duration-500"></div>
         <div class="absolute -top-10 -right-10 w-20 h-20 bg-pink-400 rounded-full opacity-10 group-hover:opacity-20 group-hover:scale-110 transition-all duration-500"></div>
         <div class="relative z-10">
@@ -157,7 +157,7 @@
         </div>
       </button>
 
-      <button onclick="loadSketch('noise_field_sculpture')" class="group relative overflow-hidden rounded-2xl bg-white/70 dark:bg-gray-800/70 backdrop-blur-md shadow-lg hover:shadow-2xl transition-all duration-500 p-6 sm:p-8 border border-lime-200/50 dark:border-lime-700/50 hover:border-lime-400 dark:hover:border-lime-500 hover:scale-105 transform min-h-[160px]">
+      <button onclick="loadSketch('noise_field_sculpture')" class="group relative overflow-hidden rounded-2xl bg-white/70 dark:bg-gray-800/70 backdrop-blur-md shadow-lg hover:shadow-2xl transition-all duration-500 p-4 sm:p-6 border border-lime-200/50 dark:border-lime-700/50 hover:border-lime-400 dark:hover:border-lime-500 hover:scale-105 transform min-h-[140px]">
         <div class="absolute inset-0 bg-gradient-to-br from-lime-400 to-green-500 opacity-0 group-hover:opacity-20 transition-all duration-500"></div>
         <div class="absolute -top-10 -right-10 w-20 h-20 bg-lime-400 rounded-full opacity-10 group-hover:opacity-20 group-hover:scale-110 transition-all duration-500"></div>
         <div class="relative z-10">
@@ -170,7 +170,7 @@
         </div>
       </button>
 
-      <button onclick="loadSketch('mandelbrot')" class="group relative overflow-hidden rounded-2xl bg-white/70 dark:bg-gray-800/70 backdrop-blur-md shadow-lg hover:shadow-2xl transition-all duration-500 p-6 sm:p-8 border border-indigo-200/50 dark:border-indigo-700/50 hover:border-indigo-400 dark:hover:border-indigo-500 hover:scale-105 transform min-h-[160px]">
+      <button onclick="loadSketch('mandelbrot')" class="group relative overflow-hidden rounded-2xl bg-white/70 dark:bg-gray-800/70 backdrop-blur-md shadow-lg hover:shadow-2xl transition-all duration-500 p-4 sm:p-6 border border-indigo-200/50 dark:border-indigo-700/50 hover:border-indigo-400 dark:hover:border-indigo-500 hover:scale-105 transform min-h-[140px]">
         <div class="absolute inset-0 bg-gradient-to-br from-indigo-400 to-blue-500 opacity-0 group-hover:opacity-20 transition-all duration-500"></div>
         <div class="absolute -top-10 -right-10 w-20 h-20 bg-indigo-400 rounded-full opacity-10 group-hover:opacity-20 group-hover:scale-110 transition-all duration-500"></div>
         <div class="relative z-10">
@@ -183,7 +183,7 @@
         </div>
       </button>
 
-      <button onclick="loadSketch('ornstein_uhlenbeck')" class="group relative overflow-hidden rounded-2xl bg-white/70 dark:bg-gray-800/70 backdrop-blur-md shadow-lg hover:shadow-2xl transition-all duration-500 p-6 sm:p-8 border border-rose-200/50 dark:border-rose-700/50 hover:border-rose-400 dark:hover:border-rose-500 hover:scale-105 transform min-h-[160px]">
+      <button onclick="loadSketch('ornstein_uhlenbeck')" class="group relative overflow-hidden rounded-2xl bg-white/70 dark:bg-gray-800/70 backdrop-blur-md shadow-lg hover:shadow-2xl transition-all duration-500 p-4 sm:p-6 border border-rose-200/50 dark:border-rose-700/50 hover:border-rose-400 dark:hover:border-rose-500 hover:scale-105 transform min-h-[140px]">
         <div class="absolute inset-0 bg-gradient-to-br from-rose-400 to-red-500 opacity-0 group-hover:opacity-20 transition-all duration-500"></div>
         <div class="absolute -top-10 -right-10 w-20 h-20 bg-rose-400 rounded-full opacity-10 group-hover:opacity-20 group-hover:scale-110 transition-all duration-500"></div>
         <div class="relative z-10">
@@ -196,7 +196,7 @@
         </div>
       </button>
 
-      <button onclick="loadSketch('gray_scott')" class="group relative overflow-hidden rounded-2xl bg-white/70 dark:bg-gray-800/70 backdrop-blur-md shadow-lg hover:shadow-2xl transition-all duration-500 p-6 sm:p-8 border border-teal-200/50 dark:border-teal-700/50 hover:border-teal-400 dark:hover:border-teal-500 hover:scale-105 transform min-h-[160px]">
+      <button onclick="loadSketch('gray_scott')" class="group relative overflow-hidden rounded-2xl bg-white/70 dark:bg-gray-800/70 backdrop-blur-md shadow-lg hover:shadow-2xl transition-all duration-500 p-4 sm:p-6 border border-teal-200/50 dark:border-teal-700/50 hover:border-teal-400 dark:hover:border-teal-500 hover:scale-105 transform min-h-[140px]">
         <div class="absolute inset-0 bg-gradient-to-br from-teal-400 to-green-500 opacity-0 group-hover:opacity-20 transition-all duration-500"></div>
         <div class="absolute -top-10 -right-10 w-20 h-20 bg-teal-400 rounded-full opacity-10 group-hover:opacity-20 group-hover:scale-110 transition-all duration-500"></div>
         <div class="relative z-10">
