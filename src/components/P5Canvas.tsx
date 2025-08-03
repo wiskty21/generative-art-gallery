@@ -166,31 +166,32 @@ export default function P5Canvas({ mode }: P5CanvasProps) {
 
     // Load appropriate sketch script
     const getSketchPath = (mode: ArtMode) => {
+      const basePath = process.env.NODE_ENV === 'production' ? '/generative-art-gallery' : ''
       switch (mode) {
         case 'gray_scott':
-          return '/sketches/gray-scott.js'
+          return `${basePath}/sketches/gray-scott.js`
         case 'flow_field':
-          return '/sketches/flow-field.js'
+          return `${basePath}/sketches/flow-field.js`
         case 'wave_interference':
-          return '/sketches/wave-interference.js'
+          return `${basePath}/sketches/wave-interference.js`
         case 'recursive_tree':
-          return '/sketches/recursive-tree.js'
+          return `${basePath}/sketches/recursive-tree.js`
         case 'mandelbrot':
-          return '/sketches/mandelbrot.js'
+          return `${basePath}/sketches/mandelbrot.js`
         case 'ornstein_uhlenbeck':
-          return '/sketches/ornstein-uhlenbeck.js'
+          return `${basePath}/sketches/ornstein-uhlenbeck.js`
         case 'harmonic_waves':
-          return '/sketches/harmonic-waves.js'
+          return `${basePath}/sketches/harmonic-waves.js`
         case 'polar_rose':
-          return '/sketches/polar-rose.js'
+          return `${basePath}/sketches/polar-rose.js`
         case 'noise_field_sculpture':
-          return '/sketches/noise-field-sculpture.js'
+          return `${basePath}/sketches/noise-field-sculpture.js`
         case 'perlin_landscape':
-          return '/sketches/perlin-landscape.js'
+          return `${basePath}/sketches/perlin-landscape.js`
         case 'boids':
-          return '/sketches/boids.js'
+          return `${basePath}/sketches/boids.js`
         case 'lissajous':
-          return '/sketches/lissajous.js'
+          return `${basePath}/sketches/lissajous.js`
         default:
           return null // All 12 artworks are now implemented
       }
