@@ -1,0 +1,162 @@
+/* Main styles for Generative Art Gallery */
+:root {
+  /* Color system */
+  --color-primary: #3b82f6;
+  --color-secondary: #8b5cf6;
+  --color-accent: #ec4899;
+  
+  /* Spacing system */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-2xl: 3rem;
+  
+  /* Border radius */
+  --radius-sm: 0.5rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.5rem;
+  --radius-xl: 2rem;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-normal: 300ms ease;
+  --transition-slow: 500ms ease;
+}
+
+/* Base body styles */
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: linear-gradient(135deg, 
+    rgb(249, 250, 251) 0%, 
+    rgb(239, 246, 255) 35%, 
+    rgb(250, 245, 255) 100%);
+  min-height: 100vh;
+  transition: all var(--transition-slow);
+}
+
+/* Dark mode */
+.dark body {
+  background: linear-gradient(135deg, 
+    rgb(17, 24, 39) 0%, 
+    rgb(30, 58, 138) 35%, 
+    rgb(88, 28, 135) 100%);
+}
+
+/* Typography */
+.title-gradient {
+  background: linear-gradient(135deg, 
+    rgb(37, 99, 235), 
+    rgb(147, 51, 234), 
+    rgb(236, 72, 153));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Custom button styles */
+.art-button {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-xl);
+  backdrop-filter: blur(12px);
+  transition: all var(--transition-slow);
+  transform: translateZ(0); /* Enable hardware acceleration */
+}
+
+.art-button:hover {
+  transform: scale(1.05) translateZ(0);
+  box-shadow: var(--shadow-xl);
+}
+
+.art-button:active {
+  transform: scale(1.02) translateZ(0);
+}
+
+/* Glass morphism effect */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.dark .glass {
+  background: rgba(31, 41, 55, 0.7);
+  border: 1px solid rgba(75, 85, 99, 0.5);
+}
+
+/* Canvas container */
+.canvas-container {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  position: relative;
+}
+
+.dark .canvas-container {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Focus styles for accessibility */
+.art-button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Animation keyframes */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes fadeIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(20px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+@keyframes slideUp {
+  from { 
+    transform: translateY(10px); 
+    opacity: 0; 
+  }
+  to { 
+    transform: translateY(0); 
+    opacity: 1; 
+  }
+}
+
+@keyframes scaleIn {
+  from { 
+    transform: scale(0.95); 
+    opacity: 0; 
+  }
+  to { 
+    transform: scale(1); 
+    opacity: 1; 
+  }
+}
+
+@keyframes glow {
+  0% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
+  100% { box-shadow: 0 0 30px rgba(59, 130, 246, 0.6); }
+}
+
+/* Utility classes */
+.animate-float { animation: float 6s ease-in-out infinite; }
+.animate-fade-in { animation: fadeIn 0.6s ease-in-out; }
+.animate-slide-up { animation: slideUp 0.4s ease-out; }
+.animate-scale-in { animation: scaleIn 0.3s ease-out; }
+.animate-glow { animation: glow 2s ease-in-out infinite alternate; }
