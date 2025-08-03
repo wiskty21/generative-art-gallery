@@ -43,6 +43,27 @@ let gsDiffusionA = 1.0;
 let gsDiffusionB = 0.5;
 let gsDt = 1.0; // 時間刻み幅
 
+// Harmonic Waves用変数
+let hwTime = 0;
+let hwFreqX = 0.02;
+let hwFreqY = 0.015;
+let hwPhaseX = 0;
+let hwPhaseY = 0;
+let hwAmplitude = 80;
+
+// Polar Rose用変数
+let prTime = 0;
+let prK = 5; // 花びらの数に関連
+let prRotationSpeed = 0.01;
+let prNumRoses = 8;
+let prScale = 200;
+
+// Noise Field Sculpture用変数
+let nfsNoiseScale = 0.01;
+let nfsZOffset = 0;
+let nfsNumContours = 12;
+let nfsContourSpacing = 20;
+
 function setup() {
   const canvas = createCanvas(800, 800);
   canvas.parent('canvas-container');
@@ -96,6 +117,18 @@ function initializeSketch() {
     gsWidth = 200; // 解像度を少し下げて安定性向上
     gsHeight = 200;
     initializeGrayScott();
+  } else if (currentMode === 'harmonic_waves') {
+    colorMode(HSB, 360, 100, 100);
+    background(0);
+    hwTime = 0;
+  } else if (currentMode === 'polar_rose') {
+    colorMode(HSB, 360, 100, 100);
+    background(0);
+    prTime = 0;
+  } else if (currentMode === 'noise_field_sculpture') {
+    colorMode(HSB, 360, 100, 100);
+    background(220, 15, 95);
+    nfsZOffset = 0;
   }
 }
 
@@ -118,6 +151,12 @@ function draw() {
     drawOrnsteinUhlenbeck();
   } else if (currentMode === 'gray_scott') {
     drawGrayScott();
+  } else if (currentMode === 'harmonic_waves') {
+    drawHarmonicWaves();
+  } else if (currentMode === 'polar_rose') {
+    drawPolarRose();
+  } else if (currentMode === 'noise_field_sculpture') {
+    drawNoiseFieldSculpture();
   }
 }
 
@@ -254,6 +293,15 @@ function mouseMoved() {
     // パラメータをマウス位置で調整
     ouTheta = map(mouseX, 0, width, 0.05, 0.3);
     ouSigma = map(mouseY, 0, height, 0.2, 0.8);
+  } else if (currentMode === 'harmonic_waves') {
+    hwFreqX = map(mouseX, 0, width, 0.005, 0.05);
+    hwFreqY = map(mouseY, 0, height, 0.005, 0.05);
+  } else if (currentMode === 'polar_rose') {
+    prK = map(mouseX, 0, width, 2, 12);
+    prRotationSpeed = map(mouseY, 0, height, 0.005, 0.03);
+  } else if (currentMode === 'noise_field_sculpture') {
+    nfsNoiseScale = map(mouseX, 0, width, 0.003, 0.03);
+    nfsNumContours = floor(map(mouseY, 0, height, 5, 20));
   }
 }
 
@@ -304,6 +352,29 @@ function keyPressed() {
       initializeGrayScott();
     } else if (key === 's' || key === 'S') {
       save('gray_scott_' + frameCount + '.png');
+    }
+  } else if (currentMode === 'harmonic_waves') {
+    if (key === 'r' || key === 'R') {
+      hwTime = 0;
+      hwPhaseX = 0;
+      hwPhaseY = 0;
+      background(0);
+    } else if (key === 's' || key === 'S') {
+      save('harmonic_waves_' + frameCount + '.png');
+    }
+  } else if (currentMode === 'polar_rose') {
+    if (key === 'r' || key === 'R') {
+      prTime = 0;
+      background(0);
+    } else if (key === 's' || key === 'S') {
+      save('polar_rose_' + frameCount + '.png');
+    }
+  } else if (currentMode === 'noise_field_sculpture') {
+    if (key === 'r' || key === 'R') {
+      nfsZOffset = 0;
+      background(220, 15, 95);
+    } else if (key === 's' || key === 'S') {
+      save('noise_field_sculpture_' + frameCount + '.png');
     }
   }
 }
@@ -639,4 +710,127 @@ function drawGrayScott() {
     }
   }
   updatePixels();
+}
+
+// Harmonic Waves（調和波動）の描画
+function drawHarmonicWaves() {
+  // 背景を少しずつフェード
+  fill(0, 20);
+  noStroke();
+  rect(0, 0, width, height);
+  
+  // 波の描画
+  for (let layer = 0; layer < 3; layer++) {
+    let freq1 = hwFreqX * (layer + 1);
+    let freq2 = hwFreqY * (layer + 1);
+    let phase1 = hwPhaseX + layer * PI / 3;
+    let phase2 = hwPhaseY + layer * PI / 4;
+    
+    stroke((120 + layer * 60) % 360, 80, 90, 60);
+    strokeWeight(2);
+    noFill();
+    
+    beginShape();
+    for (let x = 0; x < width; x += 4) {
+      let wave1 = sin(x * freq1 + hwTime + phase1) * hwAmplitude;
+      let wave2 = cos(x * freq2 + hwTime * 1.3 + phase2) * hwAmplitude * 0.7;
+      let y = height / 2 + wave1 + wave2;
+      vertex(x, y);
+    }
+    endShape();
+    
+    // 垂直方向の波も追加
+    beginShape();
+    for (let y = 0; y < height; y += 4) {
+      let wave1 = sin(y * freq2 + hwTime * 1.1 + phase1) * hwAmplitude;
+      let wave2 = cos(y * freq1 + hwTime * 0.9 + phase2) * hwAmplitude * 0.5;
+      let x = width / 2 + wave1 + wave2;
+      vertex(x, y);
+    }
+    endShape();
+  }
+  
+  hwTime += 0.02;
+}
+
+// Polar Rose（極座標バラ）の描画
+function drawPolarRose() {
+  // 背景をフェード
+  fill(0, 30);
+  noStroke();
+  rect(0, 0, width, height);
+  
+  push();
+  translate(width / 2, height / 2);
+  
+  for (let i = 0; i < prNumRoses; i++) {
+    let hue = (i * 45 + prTime * 50) % 360;
+    let k = prK + sin(prTime + i) * 2;
+    let scale = prScale * (0.7 + 0.3 * sin(prTime * 0.7 + i));
+    
+    stroke(hue, 80, 90, 120);
+    strokeWeight(2);
+    noFill();
+    
+    push();
+    rotate(prTime * prRotationSpeed + i * TWO_PI / prNumRoses);
+    
+    beginShape();
+    for (let theta = 0; theta < TWO_PI * k; theta += 0.05) {
+      let r = sin(k * theta) * scale;
+      let x = r * cos(theta);
+      let y = r * sin(theta);
+      vertex(x, y);
+    }
+    endShape();
+    
+    pop();
+  }
+  
+  pop();
+  
+  prTime += 0.015;
+}
+
+// Noise Field Sculpture（ノイズ地形）の描画
+function drawNoiseFieldSculpture() {
+  background(220, 15, 95);
+  
+  // 等高線を描画
+  for (let level = 0; level < nfsNumContours; level++) {
+    let targetHeight = level * nfsContourSpacing;
+    let hue = (200 + level * 15) % 360;
+    let sat = 60 + level * 3;
+    
+    stroke(hue, sat, 70, 150);
+    strokeWeight(1);
+    noFill();
+    
+    // マーチングスクエア風のアプローチで等高線を描画
+    for (let x = 0; x < width - 10; x += 10) {
+      for (let y = 0; y < height - 10; y += 10) {
+        let noiseVal1 = noise(x * nfsNoiseScale, y * nfsNoiseScale, nfsZOffset) * 255;
+        let noiseVal2 = noise((x + 10) * nfsNoiseScale, y * nfsNoiseScale, nfsZOffset) * 255;
+        let noiseVal3 = noise(x * nfsNoiseScale, (y + 10) * nfsNoiseScale, nfsZOffset) * 255;
+        let noiseVal4 = noise((x + 10) * nfsNoiseScale, (y + 10) * nfsNoiseScale, nfsZOffset) * 255;
+        
+        // 等高線の交点を見つけて線を描画
+        if ((noiseVal1 < targetHeight && noiseVal2 > targetHeight) ||
+            (noiseVal1 > targetHeight && noiseVal2 < targetHeight)) {
+          let t = (targetHeight - noiseVal1) / (noiseVal2 - noiseVal1);
+          let px = x + t * 10;
+          point(px, y);
+        }
+        
+        if ((noiseVal1 < targetHeight && noiseVal3 > targetHeight) ||
+            (noiseVal1 > targetHeight && noiseVal3 < targetHeight)) {
+          let t = (targetHeight - noiseVal1) / (noiseVal3 - noiseVal1);
+          let py = y + t * 10;
+          point(x, py);
+        }
+      }
+    }
+  }
+  
+  nfsZOffset += 0.005;
 }

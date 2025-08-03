@@ -72,6 +72,24 @@
         <p class="text-gray-600 dark:text-gray-400 text-sm">風に揺れるフラクタルツリー</p>
       </button>
 
+      <button onclick="loadSketch('harmonic_waves')" class="group relative overflow-hidden rounded-xl bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-300 p-6 border-2 border-transparent hover:border-cyan-500 dark:hover:border-cyan-400">
+        <div class="absolute inset-0 bg-gradient-to-br from-cyan-400 to-blue-500 opacity-0 group-hover:opacity-10 transition-opacity"></div>
+        <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">Harmonic Waves</h3>
+        <p class="text-gray-600 dark:text-gray-400 text-sm">正弦波と余弦波の美しい調和</p>
+      </button>
+
+      <button onclick="loadSketch('polar_rose')" class="group relative overflow-hidden rounded-xl bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-300 p-6 border-2 border-transparent hover:border-pink-500 dark:hover:border-pink-400">
+        <div class="absolute inset-0 bg-gradient-to-br from-pink-400 to-rose-500 opacity-0 group-hover:opacity-10 transition-opacity"></div>
+        <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">Polar Rose</h3>
+        <p class="text-gray-600 dark:text-gray-400 text-sm">極座標バラ曲線の幾何学模様</p>
+      </button>
+
+      <button onclick="loadSketch('noise_field_sculpture')" class="group relative overflow-hidden rounded-xl bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-300 p-6 border-2 border-transparent hover:border-lime-500 dark:hover:border-lime-400">
+        <div class="absolute inset-0 bg-gradient-to-br from-lime-400 to-green-500 opacity-0 group-hover:opacity-10 transition-opacity"></div>
+        <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">Noise Field Sculpture</h3>
+        <p class="text-gray-600 dark:text-gray-400 text-sm">Perlinノイズによる地形等高線</p>
+      </button>
+
       <button onclick="loadSketch('mandelbrot')" class="group relative overflow-hidden rounded-xl bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-300 p-6 border-2 border-transparent hover:border-indigo-500 dark:hover:border-indigo-400">
         <div class="absolute inset-0 bg-gradient-to-br from-indigo-400 to-blue-500 opacity-0 group-hover:opacity-10 transition-opacity"></div>
         <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">Mandelbrot集合</h3>
@@ -159,6 +177,9 @@
         'flow_field': 'マウスクリックで新しいパーティクルを追加できます',
         'wave_interference': 'マウスクリックで波源を移動、スペースキーで再配置、Rキーでパラメータ変更',
         'recursive_tree': 'マウスを動かして木の形を変更、スペースキーで再描画、Sキーで画像保存',
+        'harmonic_waves': 'マウス位置で周波数と位相を調整、Rキーでリセット、Sキーで画像保存',
+        'polar_rose': 'マウス位置でバラの形を変更、Rキーでリセット、Sキーで画像保存',
+        'noise_field_sculpture': 'マウス位置でノイズスケールを調整、Rキーでリセット、Sキーで画像保存',
         'mandelbrot': 'マウスクリックでズーム、Rキーでリセット、Sキーで画像保存',
         'ornstein_uhlenbeck': 'マウス位置でパラメータ調整、Rキーでリセット、Sキーで画像保存',
         'gray_scott': 'マウスクリックで新しい種を追加、Rキーでリセット、Sキーで画像保存'
@@ -235,6 +256,42 @@
             </label>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               ノイズ強度σ: マウスのY座標で調整
+            </label>
+          </div>
+        `;
+      } else if (sketchName === 'harmonic_waves') {
+        panel.classList.remove('hidden');
+        content.innerHTML = `
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              周波数X: マウスのX座標で調整
+            </label>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              周波数Y: マウスのY座標で調整
+            </label>
+          </div>
+        `;
+      } else if (sketchName === 'polar_rose') {
+        panel.classList.remove('hidden');
+        content.innerHTML = `
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              花びらの数: マウスのX座標で調整
+            </label>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              回転速度: マウスのY座標で調整
+            </label>
+          </div>
+        `;
+      } else if (sketchName === 'noise_field_sculpture') {
+        panel.classList.remove('hidden');
+        content.innerHTML = `
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              ノイズスケール: マウスのX座標で調整
+            </label>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              等高線の数: マウスのY座標で調整
             </label>
           </div>
         `;
