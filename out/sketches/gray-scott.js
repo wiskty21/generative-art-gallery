@@ -28,7 +28,7 @@ window.currentP5Instance = new p5(function(p) {
       return;
     }
     
-    const size = Math.min(600, window.innerWidth - 100, window.innerHeight - 100);
+    const size = 800;
     console.log('Creating canvas with size:', size);
     const canvas = p.createCanvas(size, size);
     canvas.parent('p5-canvas-container');
@@ -52,19 +52,31 @@ window.currentP5Instance = new p5(function(p) {
     mouseDraggedGrayScott();
   }
 
-  // タッチイベントサポート（モバイル対応）
+  // タッチイベントサポート（モバイル対応）- スクロールを維持
   p.touchStarted = function() {
     if (p.touches.length > 0) {
-      addBAt(p.touches[0].x, p.touches[0].y);
+      let touch = p.touches[0];
+      // キャンバス内のタッチのみ処理
+      if (touch.x >= 0 && touch.x <= p.width && touch.y >= 0 && touch.y <= p.height) {
+        addBAt(touch.x, touch.y);
+        return false; // prevent default only for canvas touches
+      }
     }
-    return false; // prevent default
+    // キャンバス外のタッチはデフォルト動作（スクロール）を許可
+    return true;
   }
 
   p.touchMoved = function() {
     if (p.touches.length > 0) {
-      addBAt(p.touches[0].x, p.touches[0].y);
+      let touch = p.touches[0];
+      // キャンバス内のタッチのみ処理
+      if (touch.x >= 0 && touch.x <= p.width && touch.y >= 0 && touch.y <= p.height) {
+        addBAt(touch.x, touch.y);
+        return false; // prevent default only for canvas touches
+      }
     }
-    return false; // prevent default
+    // キャンバス外のタッチはデフォルト動作（スクロール）を許可
+    return true;
   }
 
   p.keyPressed = function() {
