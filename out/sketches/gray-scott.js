@@ -52,6 +52,21 @@ window.currentP5Instance = new p5(function(p) {
     mouseDraggedGrayScott();
   }
 
+  // タッチイベントサポート（モバイル対応）
+  p.touchStarted = function() {
+    if (p.touches.length > 0) {
+      addBAt(p.touches[0].x, p.touches[0].y);
+    }
+    return false; // prevent default
+  }
+
+  p.touchMoved = function() {
+    if (p.touches.length > 0) {
+      addBAt(p.touches[0].x, p.touches[0].y);
+    }
+    return false; // prevent default
+  }
+
   p.keyPressed = function() {
     keyPressedGrayScott();
   }
@@ -92,10 +107,9 @@ window.currentP5Instance = new p5(function(p) {
       updateGrayScott();
     }
     
-    // グリッドを画面に描画
+    // グリッドを画面に描画 - よりシンプルで安定した方法
     p.loadPixels();
-    let pixelDens = p.pixelDensity();
-    let scaleFactor = p.width / gsWidth;
+    let scaleFactor = Math.floor(p.width / gsWidth);
     
     for (let x = 0; x < gsWidth; x++) {
       for (let y = 0; y < gsHeight; y++) {
@@ -104,13 +118,13 @@ window.currentP5Instance = new p5(function(p) {
         let c = Math.floor((a - b) * 255);
         c = p.constrain(c, 0, 255);
         
-        // ピクセルを拡大して描画
+        // ピクセルを拡大して描画 - モバイル対応の安定した方法
         for (let dx = 0; dx < scaleFactor; dx++) {
           for (let dy = 0; dy < scaleFactor; dy++) {
             let px = x * scaleFactor + dx;
             let py = y * scaleFactor + dy;
             if (px < p.width && py < p.height) {
-              let idx = 4 * pixelDens * (py * p.width * pixelDens + px);
+              let idx = 4 * (py * p.width + px);
               p.pixels[idx] = c;
               p.pixels[idx + 1] = c;
               p.pixels[idx + 2] = c;
