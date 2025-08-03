@@ -101,7 +101,7 @@ function drawPolarRose(p) {
 
 function mousePressedPolarRose(p) {
   // バラの数をランダムに変更
-  prNumRoses = p.floor(p.random(3, 8));
+  prNumRoses = Math.floor(p.random(3, 8));
   prTime = 0;
 }
 

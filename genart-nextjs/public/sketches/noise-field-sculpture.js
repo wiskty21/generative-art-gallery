@@ -131,7 +131,7 @@ function mousePressedNoiseFieldSculpture(p) {
 
 function mouseMovedNoiseFieldSculpture(p) {
   nfsNoiseScale = p.map(p.mouseX, 0, p.width, 0.003, 0.03); // 左右を逆にしてズーム感を直感的に
-  nfsNumContours = p.floor(p.map(p.mouseY, 0, p.height, 5, 20));
+  nfsNumContours = Math.floor(p.map(p.mouseY, 0, p.height, 5, 20));
 }
 
 function keyPressedNoiseFieldSculpture(p) {

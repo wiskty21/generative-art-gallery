@@ -133,6 +133,9 @@ window.currentP5Instance = new p5(function(p) {
         while (particles.length > value) {
           particles.pop();
         }
+        while (particles.length < value) {
+          particles.push(new Particle(p.random(p.width), p.random(p.height)));
+        }
         break;
     }
   }

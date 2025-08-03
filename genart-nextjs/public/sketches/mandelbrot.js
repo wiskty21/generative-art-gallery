@@ -61,9 +61,9 @@ function initializeMandelbrotPalette(p) {
   for (let i = 0; i < maxIterations; i++) {
     let t = i / maxIterations;
     mandelbrotPalette.push({
-      r: p.floor(9 * (1-t) * t * t * t * 255),
-      g: p.floor(15 * (1-t) * (1-t) * t * t * 255),
-      b: p.floor(8.5 * (1-t) * (1-t) * (1-t) * t * 255)
+      r: Math.floor(9 * (1-t) * t * t * t * 255),
+      g: Math.floor(15 * (1-t) * (1-t) * t * t * 255),
+      b: Math.floor(8.5 * (1-t) * (1-t) * (1-t) * t * 255)
     });
   }
 }

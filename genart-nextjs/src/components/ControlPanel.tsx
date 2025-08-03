@@ -27,6 +27,12 @@ export default function ControlPanel({ mode }: ControlPanelProps) {
       window.updatePolarRoseParameter(param, value)
     } else if (mode === 'noise_field_sculpture' && typeof window.updateNoiseFieldSculptureParameter === 'function') {
       window.updateNoiseFieldSculptureParameter(param, value)
+    } else if (mode === 'perlin_landscape' && typeof window.updatePerlinLandscapeParameter === 'function') {
+      window.updatePerlinLandscapeParameter(param, value)
+    } else if (mode === 'boids' && typeof window.updateBoidsParameter === 'function') {
+      window.updateBoidsParameter(param, value)
+    } else if (mode === 'lissajous' && typeof window.updateLissajousParameter === 'function') {
+      window.updateLissajousParameter(param, value)
     }
   }
 
@@ -390,6 +396,170 @@ export default function ControlPanel({ mode }: ControlPanelProps) {
                 className="w-full"
               />
               <span className="text-xs text-gray-400">12</span>
+            </div>
+          </div>
+        )
+      
+      case 'perlin_landscape':
+        return (
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Perlin Landscape Parameters</h3>
+            <div>
+              <label className="block text-sm font-medium mb-1">Terrain Scale</label>
+              <input 
+                type="range" 
+                min="10" 
+                max="50" 
+                step="5" 
+                defaultValue="20"
+                onChange={(e) => handleParameterChange('scale', parseInt(e.target.value))}
+                className="w-full"
+              />
+              <span className="text-xs text-gray-400">20</span>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Flight Speed</label>
+              <input 
+                type="range" 
+                min="0.005" 
+                max="0.05" 
+                step="0.005" 
+                defaultValue="0.01"
+                onChange={(e) => handleParameterChange('speed', parseFloat(e.target.value))}
+                className="w-full"
+              />
+              <span className="text-xs text-gray-400">0.01</span>
+            </div>
+          </div>
+        )
+
+      case 'boids':
+        return (
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Boids Flocking Parameters</h3>
+            <div>
+              <label className="block text-sm font-medium mb-1">Separation Radius</label>
+              <input 
+                type="range" 
+                min="15" 
+                max="50" 
+                step="5" 
+                defaultValue="25"
+                onChange={(e) => handleParameterChange('separation', parseInt(e.target.value))}
+                className="w-full"
+              />
+              <span className="text-xs text-gray-400">25</span>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Alignment Radius</label>
+              <input 
+                type="range" 
+                min="30" 
+                max="80" 
+                step="10" 
+                defaultValue="50"
+                onChange={(e) => handleParameterChange('alignment', parseInt(e.target.value))}
+                className="w-full"
+              />
+              <span className="text-xs text-gray-400">50</span>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Cohesion Radius</label>
+              <input 
+                type="range" 
+                min="30" 
+                max="80" 
+                step="10" 
+                defaultValue="50"
+                onChange={(e) => handleParameterChange('cohesion', parseInt(e.target.value))}
+                className="w-full"
+              />
+              <span className="text-xs text-gray-400">50</span>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Boid Count</label>
+              <input 
+                type="range" 
+                min="50" 
+                max="200" 
+                step="10" 
+                defaultValue="100"
+                onChange={(e) => handleParameterChange('count', parseInt(e.target.value))}
+                className="w-full"
+              />
+              <span className="text-xs text-gray-400">100</span>
+            </div>
+          </div>
+        )
+
+      case 'lissajous':
+        return (
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Lissajous Curves Parameters</h3>
+            <div>
+              <label className="block text-sm font-medium mb-1">X Frequency</label>
+              <input 
+                type="range" 
+                min="1" 
+                max="8" 
+                step="0.5" 
+                defaultValue="3"
+                onChange={(e) => handleParameterChange('freqX', parseFloat(e.target.value))}
+                className="w-full"
+              />
+              <span className="text-xs text-gray-400">3</span>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Y Frequency</label>
+              <input 
+                type="range" 
+                min="1" 
+                max="8" 
+                step="0.5" 
+                defaultValue="2"
+                onChange={(e) => handleParameterChange('freqY', parseFloat(e.target.value))}
+                className="w-full"
+              />
+              <span className="text-xs text-gray-400">2</span>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Phase Shift</label>
+              <input 
+                type="range" 
+                min="0" 
+                max="6.28" 
+                step="0.1" 
+                defaultValue="0"
+                onChange={(e) => handleParameterChange('phase', parseFloat(e.target.value))}
+                className="w-full"
+              />
+              <span className="text-xs text-gray-400">0</span>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Animation Speed</label>
+              <input 
+                type="range" 
+                min="0.005" 
+                max="0.05" 
+                step="0.005" 
+                defaultValue="0.02"
+                onChange={(e) => handleParameterChange('speed', parseFloat(e.target.value))}
+                className="w-full"
+              />
+              <span className="text-xs text-gray-400">0.02</span>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Trail Length</label>
+              <input 
+                type="range" 
+                min="200" 
+                max="1000" 
+                step="50" 
+                defaultValue="500"
+                onChange={(e) => handleParameterChange('trailLength', parseInt(e.target.value))}
+                className="w-full"
+              />
+              <span className="text-xs text-gray-400">500</span>
             </div>
           </div>
         )
