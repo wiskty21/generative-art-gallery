@@ -19,6 +19,14 @@ export default function ControlPanel({ mode }: ControlPanelProps) {
       window.updateRecursiveTreeParameter(param, value)
     } else if (mode === 'mandelbrot' && typeof window.updateMandelbrotParameter === 'function') {
       window.updateMandelbrotParameter(param, value)
+    } else if (mode === 'ornstein_uhlenbeck' && typeof window.updateOrnsteinUhlenbeckParameter === 'function') {
+      window.updateOrnsteinUhlenbeckParameter(param, value)
+    } else if (mode === 'harmonic_waves' && typeof window.updateHarmonicWavesParameter === 'function') {
+      window.updateHarmonicWavesParameter(param, value)
+    } else if (mode === 'polar_rose' && typeof window.updatePolarRoseParameter === 'function') {
+      window.updatePolarRoseParameter(param, value)
+    } else if (mode === 'noise_field_sculpture' && typeof window.updateNoiseFieldSculptureParameter === 'function') {
+      window.updateNoiseFieldSculptureParameter(param, value)
     }
   }
 
@@ -224,6 +232,164 @@ export default function ControlPanel({ mode }: ControlPanelProps) {
                 className="w-full"
               />
               <span className="text-xs text-gray-400">1x</span>
+            </div>
+          </div>
+        )
+      
+      case 'ornstein_uhlenbeck':
+        return (
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Ornstein-Uhlenbeck Parameters</h3>
+            <div>
+              <label className="block text-sm font-medium mb-1">Theta (Drift)</label>
+              <input 
+                type="range" 
+                min="0.05" 
+                max="0.5" 
+                step="0.01" 
+                defaultValue="0.15"
+                onChange={(e) => handleParameterChange('theta', parseFloat(e.target.value))}
+                className="w-full"
+              />
+              <span className="text-xs text-gray-400">0.15</span>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Sigma (Noise)</label>
+              <input 
+                type="range" 
+                min="0.1" 
+                max="1.0" 
+                step="0.05" 
+                defaultValue="0.4"
+                onChange={(e) => handleParameterChange('sigma', parseFloat(e.target.value))}
+                className="w-full"
+              />
+              <span className="text-xs text-gray-400">0.4</span>
+            </div>
+          </div>
+        )
+      
+      case 'harmonic_waves':
+        return (
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Harmonic Waves Parameters</h3>
+            <div>
+              <label className="block text-sm font-medium mb-1">Frequency X</label>
+              <input 
+                type="range" 
+                min="0.005" 
+                max="0.05" 
+                step="0.001" 
+                defaultValue="0.02"
+                onChange={(e) => handleParameterChange('freqX', parseFloat(e.target.value))}
+                className="w-full"
+              />
+              <span className="text-xs text-gray-400">0.02</span>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Frequency Y</label>
+              <input 
+                type="range" 
+                min="0.005" 
+                max="0.05" 
+                step="0.001" 
+                defaultValue="0.015"
+                onChange={(e) => handleParameterChange('freqY', parseFloat(e.target.value))}
+                className="w-full"
+              />
+              <span className="text-xs text-gray-400">0.015</span>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Amplitude</label>
+              <input 
+                type="range" 
+                min="20" 
+                max="150" 
+                step="5" 
+                defaultValue="80"
+                onChange={(e) => handleParameterChange('amplitude', parseInt(e.target.value))}
+                className="w-full"
+              />
+              <span className="text-xs text-gray-400">80</span>
+            </div>
+          </div>
+        )
+      
+      case 'polar_rose':
+        return (
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Polar Rose Parameters</h3>
+            <div>
+              <label className="block text-sm font-medium mb-1">K (Petals)</label>
+              <input 
+                type="range" 
+                min="3" 
+                max="8" 
+                step="0.1" 
+                defaultValue="5"
+                onChange={(e) => handleParameterChange('k', parseFloat(e.target.value))}
+                className="w-full"
+              />
+              <span className="text-xs text-gray-400">5</span>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Rotation Speed</label>
+              <input 
+                type="range" 
+                min="0.001" 
+                max="0.01" 
+                step="0.0005" 
+                defaultValue="0.003"
+                onChange={(e) => handleParameterChange('rotationSpeed', parseFloat(e.target.value))}
+                className="w-full"
+              />
+              <span className="text-xs text-gray-400">0.003</span>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Number of Roses</label>
+              <input 
+                type="range" 
+                min="3" 
+                max="8" 
+                step="1" 
+                defaultValue="6"
+                onChange={(e) => handleParameterChange('numRoses', parseInt(e.target.value))}
+                className="w-full"
+              />
+              <span className="text-xs text-gray-400">6</span>
+            </div>
+          </div>
+        )
+      
+      case 'noise_field_sculpture':
+        return (
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Noise Field Sculpture Parameters</h3>
+            <div>
+              <label className="block text-sm font-medium mb-1">Noise Scale</label>
+              <input 
+                type="range" 
+                min="0.003" 
+                max="0.03" 
+                step="0.001" 
+                defaultValue="0.01"
+                onChange={(e) => handleParameterChange('noiseScale', parseFloat(e.target.value))}
+                className="w-full"
+              />
+              <span className="text-xs text-gray-400">0.01</span>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Number of Contours</label>
+              <input 
+                type="range" 
+                min="5" 
+                max="20" 
+                step="1" 
+                defaultValue="12"
+                onChange={(e) => handleParameterChange('numContours', parseInt(e.target.value))}
+                className="w-full"
+              />
+              <span className="text-xs text-gray-400">12</span>
             </div>
           </div>
         )

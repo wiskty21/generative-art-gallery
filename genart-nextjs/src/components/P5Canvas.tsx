@@ -58,8 +58,16 @@ export default function P5Canvas({ mode }: P5CanvasProps) {
           return '/sketches/recursive-tree.js'
         case 'mandelbrot':
           return '/sketches/mandelbrot.js'
+        case 'ornstein_uhlenbeck':
+          return '/sketches/ornstein-uhlenbeck.js'
+        case 'harmonic_waves':
+          return '/sketches/harmonic-waves.js'
+        case 'polar_rose':
+          return '/sketches/polar-rose.js'
+        case 'noise_field_sculpture':
+          return '/sketches/noise-field-sculpture.js'
         default:
-          return null // For now, 5 artworks are implemented
+          return null // All 9 artworks are now implemented
       }
     }
 
