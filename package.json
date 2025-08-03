@@ -8,7 +8,9 @@
     "export": "next build",
     "deploy:local": "npm run export && touch out/.nojekyll",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "pre-deploy": "node scripts/pre-deploy-check.js",
+    "check": "npm run pre-deploy"
   },
   "dependencies": {
     "@types/p5": "^1.7.6",

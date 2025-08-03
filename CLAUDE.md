@@ -66,3 +66,92 @@ The project uses a unified architecture where all three generative art pieces ar
 ## GitHub Pages Deployment
 
 The project is designed to be deployed directly to GitHub Pages. The `index.html` file serves as the entry point with all necessary p5.js scripts loaded via CDN.
+
+## エラー防止システム - 2025年8月3日構築
+
+### 概要
+同じ失敗を繰り返さないための包括的な自動化システムを構築しました。このシステムにより、Claude Codeでの開発において既知の問題パターンを自動的に検出・警告し、品質を保証します。
+
+### 構築したシステム
+
+#### 1. 自動チェックスクリプト (`scripts/pre-deploy-check.js`)
+```bash
+npm run check       # 完全チェック実行
+npm run pre-deploy  # デプロイ前チェック
+```
+
+**検出可能な問題**:
+- basePath設定の不備
+- pixelDensity()による複雑な計算
+- p.save()の使用（互換性問題）
+- 必須ファイルの欠如
+- ビルドエラー
+
+#### 2. 開発ガイドライン (`DEVELOPMENT_GUIDELINES.md`)
+- 既知の問題パターンと解決法
+- ベストプラクティスの体系化
+- チェックリストの提供
+
+#### 3. VS Code設定 (`.vscode/settings.json`)
+- プロジェクト固有の制約事項
+- エラーパターンの記録
+
+#### 4. Pull Requestテンプレート
+- 必須チェック項目の自動化
+- テスト確認フロー
+
+### 主要な問題パターンと解決法
+
+#### モバイル表示問題
+```javascript
+// ❌ 問題のあるコード
+let pixelDens = p.pixelDensity();
+let idx = 4 * pixelDens * (py * p.width * pixelDens + px);
+
+// ✅ 解決済みコード  
+let idx = 4 * (py * p.width + px);
+```
+
+#### GitHub Pagesパス問題
+```javascript
+// ✅ 自動検出・修正可能
+const basePath = process.env.NODE_ENV === 'production' ? '/generative-art-gallery' : ''
+return `${basePath}/sketches/sketch.js`
+```
+
+#### 保存機能問題
+```javascript
+// ❌ 互換性問題
+p.save('filename.png');
+
+// ✅ 推奨方法
+p.saveCanvas('filename_' + Date.now(), 'png');
+```
+
+### 自動化レベル
+
+**レベル1 - 自動検出**: ✅ 完了
+- 問題パターンの検出
+- 設定値の確認  
+- ビルドテスト
+
+**レベル2 - 自動提案**: ✅ 完了
+- 解決方法の提示
+- ベストプラクティス案内
+
+**レベル3 - 自動修正**: 今後の拡張
+- コードの自動修正
+- 設定の自動更新
+
+### 使用方法
+
+新規開発時:
+1. `DEVELOPMENT_GUIDELINES.md` でベストプラクティス確認
+2. 開発中に `npm run check` で問題検出
+3. デプロイ前に `npm run pre-deploy` で最終確認
+
+問題発生時:
+1. ガイドラインで既知パターン確認
+2. 解決後にドキュメント更新
+
+これにより、同じエラーの再発を防ぎ、開発效率と品質を大幅に向上させることができます。
