@@ -1,36 +1,96 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Generative Art Gallery
 
-## Getting Started
+インタラクティブなジェネレーティブアート作品を展示するWebギャラリーです。p5.jsを使用した12種類の数学的・物理的アルゴリズムによる美しい視覚表現をお楽しみいただけます。
 
-First, run the development server:
+🌐 **ライブデモ**: https://wiskty21.github.io/generative-art-gallery/
+
+## 特徴
+
+- **12作品**: 反応拡散系、フラクタル、フローフィールド、波の干渉、Mandelbrot集合など
+- **インタラクティブ**: マウス・タッチ操作で作品をリアルタイム制御
+- **レスポンシブ**: デスクトップ・モバイル両対応
+- **画像保存**: 'S'キーまたはボタンクリックで作品をPNG保存
+- **パラメータ調整**: リアルタイムでアルゴリズムのパラメータを変更可能
+
+## 収録作品
+
+1. **Gray-Scott系** - 反応拡散による自己組織化パターン
+2. **Flow Field Particles** - Perlinノイズによる粒子の流れ
+3. **Wave Interference** - 複数波源からの干渉パターン
+4. **Recursive Tree** - 風に揺れるフラクタル樹木
+5. **Mandelbrot集合** - 複素数平面上のフラクタル
+6. **Ornstein-Uhlenbeck過程** - 確率微分方程式による軌道
+7. **Harmonic Waves** - 正弦波と余弦波の調和
+8. **Polar Rose** - 極座標による薔薇曲線
+9. **Noise Field Sculpture** - 地形等高線の3D表現
+10. **Perlin Landscape** - 飛行視点の地形生成
+11. **Boids** - 群れ行動の視覚化
+12. **Lissajous Curves** - リサージュ曲線の軌跡
+
+## 開発環境セットアップ
+
+### 必要な環境
+- Node.js 18以上
+- npm または yarn
+
+### インストール・起動
 
 ```bash
+# リポジトリをクローン
+git clone https://github.com/wiskty21/generative-art-gallery.git
+cd generative-art-gallery
+
+# 依存関係をインストール
+npm install
+
+# 開発サーバーを起動
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+ブラウザで [http://localhost:3000](http://localhost:3000) を開いて確認してください。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### ビルド・デプロイ
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+# プロダクションビルド
+npm run build
 
-## Learn More
+# 静的サイト生成（GitHub Pages用）
+npm run export
+```
 
-To learn more about Next.js, take a look at the following resources:
+## 技術スタック
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **フロントエンド**: Next.js 15, React 18, TypeScript
+- **スタイリング**: Tailwind CSS
+- **ビジュアライゼーション**: p5.js
+- **デプロイ**: GitHub Pages, GitHub Actions
+- **開発**: ESLint, PostCSS
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 操作方法
 
-## Deploy on Vercel
+### 基本操作
+- **作品選択**: 左サイドバーから作品をクリック
+- **パラメータ調整**: 右サイドバーのスライダーで調整
+- **画像保存**: 'S'キーまたは「Save Image」ボタン
+- **リセット**: 'R'キーまたは「Reset」ボタン
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 作品別操作
+- **Gray-Scott**: クリック/タッチで反応核を追加
+- **Flow Field**: クリックで新しい粒子を追加
+- **Wave Interference**: クリックで波源を移動
+- **Recursive Tree**: マウス移動で樹形を変更
+- **Mandelbrot**: クリックでズーム
+- **その他**: マウス位置でパラメータを動的制御
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## ライセンス
+
+MIT License - 詳細は [LICENSE](LICENSE) ファイルをご確認ください。
+
+## 作者
+
+[wiskty21](https://github.com/wiskty21)
+
+## 貢献
+
+プルリクエストやIssueによる貢献を歓迎します。新しい作品の追加や既存作品の改善など、お気軽にご提案ください。
