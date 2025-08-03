@@ -1,12 +1,31 @@
 {
-  "name": "generative-art",
-  "version": "1.0.0",
-  "description": "Generative Art with p5.js",
+  "name": "genart-nextjs",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
-    "start": "live-server --port=8080",
-    "dev": "live-server --port=8080 --watch=*.js,*.html"
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "export": "next build",
+    "deploy:local": "npm run export && touch out/.nojekyll",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@types/p5": "^1.7.6",
+    "next": "15.4.5",
+    "p5": "^2.0.3",
+    "react": "19.1.0",
+    "react-dom": "19.1.0"
   },
   "devDependencies": {
-    "live-server": "^1.2.2"
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "15.4.5",
+    "tailwindcss": "^4",
+    "typescript": "^5"
   }
 }
