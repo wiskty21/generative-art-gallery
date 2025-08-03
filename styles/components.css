@@ -482,6 +482,9 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
   overflow: hidden;
   animation: scaleIn 0.3s ease-out;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .dark .canvas-container {
@@ -503,7 +506,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 350px;
+  width: 100%;
+  height: 600px;
   position: relative;
   z-index: 10;
   border-radius: 12px;
@@ -511,8 +515,22 @@
   background: rgba(0, 0, 0, 0.05);
 }
 
+@media (max-width: 1024px) {
+  .canvas-content {
+    height: 400px;
+  }
+}
+
 .dark .canvas-content {
   background: rgba(255, 255, 255, 0.05);
+}
+
+/* Ensure p5.js canvas fits properly */
+.canvas-content canvas {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto !important;
+  height: auto !important;
 }
 
 /* Panel Components */

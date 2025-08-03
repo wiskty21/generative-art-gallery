@@ -65,9 +65,23 @@ let nfsNumContours = 12;
 let nfsContourSpacing = 20;
 
 function setup() {
-  const canvas = createCanvas(800, 800);
+  // キャンバスのサイズを親要素に合わせる
+  const container = document.getElementById('canvas-container');
+  const size = min(container.clientWidth - 20, container.clientHeight - 20, 800);
+  const canvas = createCanvas(size, size);
   canvas.parent('canvas-container');
   
+  initializeSketch();
+}
+
+// ウィンドウリサイズ時の処理
+function windowResized() {
+  const container = document.getElementById('canvas-container');
+  const size = min(container.clientWidth - 20, container.clientHeight - 20, 800);
+  resizeCanvas(size, size);
+  
+  // モードを再初期化
+  background(0);
   initializeSketch();
 }
 
@@ -135,6 +149,7 @@ function initializeSketch() {
 function changeMode(mode) {
   currentMode = mode;
   clear();
+  background(0); // 黒背景でクリア
   initializeSketch();
 }
 
@@ -511,6 +526,7 @@ function mandelbrotIterations(x, y) {
 }
 
 function drawMandelbrot() {
+  loadPixels();
   for (let x = 0; x < width; x++) {
     for (let y = 0; y < height; y++) {
       let iterations = mandelbrotIterations(x, y);
