@@ -9,9 +9,11 @@ declare global {
     updateHarmonicWavesParameter?: (param: string, value: number) => void
     updatePolarRoseParameter?: (param: string, value: number) => void
     updateNoiseFieldSculptureParameter?: (param: string, value: number) => void
-    p5?: any
+    p5?: unknown
     remove?: () => void
-    currentP5Instance?: any
+    currentP5Instance?: unknown
+    createCanvas?: unknown
+    [key: string]: unknown
     gc?: () => void
   }
 }

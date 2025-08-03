@@ -33,7 +33,7 @@ export default function P5Canvas({ mode }: P5CanvasProps) {
           if (typeof window[varName] !== 'undefined') {
             window[varName] = undefined
           }
-        } catch (e) {
+        } catch {
           // Some properties cannot be deleted, that's okay
         }
       })
