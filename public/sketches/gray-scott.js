@@ -28,7 +28,7 @@ window.currentP5Instance = new p5(function(p) {
       return;
     }
     
-    const size = 800;
+    const size = Math.min(600, window.innerWidth - 100, window.innerHeight - 100);
     console.log('Creating canvas with size:', size);
     const canvas = p.createCanvas(size, size);
     canvas.parent('p5-canvas-container');
