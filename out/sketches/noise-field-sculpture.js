@@ -139,7 +139,7 @@ function keyPressedNoiseFieldSculpture(p) {
     nfsZOffset = 0;
     p.background(220, 15, 95);
   } else if (p.key === 's' || p.key === 'S') {
-    p.save('noise_field_sculpture_' + p.frameCount + '.png');
+    p.saveCanvas('noise_field_sculpture_' + Date.now(), 'png');
   }
 }
 

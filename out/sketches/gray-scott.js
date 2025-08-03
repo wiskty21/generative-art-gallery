@@ -222,6 +222,8 @@ window.currentP5Instance = new p5(function(p) {
   function keyPressedGrayScott() {
     if (p.key === 'r' || p.key === 'R') {
       initializeGrayScott();
+    } else if (p.key === 's' || p.key === 'S') {
+      p.saveCanvas('gray_scott_' + Date.now(), 'png');
     }
   }
 

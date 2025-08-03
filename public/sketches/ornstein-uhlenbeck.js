@@ -168,7 +168,7 @@ function keyPressedOrnsteinUhlenbeck(p) {
     }
     p.background(0);
   } else if (p.key === 's' || p.key === 'S') {
-    p.save('ornstein_uhlenbeck_' + p.frameCount + '.png');
+    p.saveCanvas('ornstein_uhlenbeck_' + Date.now(), 'png');
   }
 }
 

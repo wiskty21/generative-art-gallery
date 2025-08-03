@@ -120,7 +120,7 @@ function keyPressedMandelbrot(p) {
     p.background(0);
     drawMandelbrot(p);
   } else if (p.key === 's' || p.key === 'S') {
-    p.save('mandelbrot_' + p.frameCount + '.png');
+    p.saveCanvas('mandelbrot_' + Date.now(), 'png');
   }
 }
 

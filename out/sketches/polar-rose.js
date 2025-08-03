@@ -115,7 +115,7 @@ function keyPressedPolarRose(p) {
     prTime = 0;
     p.background(0);
   } else if (p.key === 's' || p.key === 'S') {
-    p.save('polar_rose_' + p.frameCount + '.png');
+    p.saveCanvas('polar_rose_' + Date.now(), 'png');
   }
 }
 

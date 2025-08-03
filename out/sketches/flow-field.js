@@ -119,6 +119,8 @@ window.currentP5Instance = new p5(function(p) {
   function keyPressedFlowField() {
     if (p.key === 'r' || p.key === 'R') {
       initializeFlowField();
+    } else if (p.key === 's' || p.key === 'S') {
+      p.saveCanvas('flow_field_' + Date.now(), 'png');
     }
   }
 

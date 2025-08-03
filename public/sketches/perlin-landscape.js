@@ -81,6 +81,8 @@ window.currentP5Instance = new p5(function(p) {
   p.keyPressed = function() {
     if (p.key === ' ') {
       flying = p.random(-100, 0);
+    } else if (p.key === 's' || p.key === 'S') {
+      p.saveCanvas('perlin_landscape_' + Date.now(), 'png');
     }
   }
 

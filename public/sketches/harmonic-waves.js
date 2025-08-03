@@ -119,7 +119,7 @@ function keyPressedHarmonicWaves(p) {
     hwPhaseY = 0;
     p.background(0);
   } else if (p.key === 's' || p.key === 'S') {
-    p.save('harmonic_waves_' + p.frameCount + '.png');
+    p.saveCanvas('harmonic_waves_' + Date.now(), 'png');
   }
 }
 

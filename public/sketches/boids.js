@@ -231,6 +231,8 @@ window.currentP5Instance = new p5(function(p) {
       for (let i = 0; i < numBoids; i++) {
         flock.push(new Boid(p.random(p.width), p.random(p.height)));
       }
+    } else if (p.key === 's' || p.key === 'S') {
+      p.saveCanvas('boids_' + Date.now(), 'png');
     }
   }
 

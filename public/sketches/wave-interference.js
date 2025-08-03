@@ -106,6 +106,8 @@ window.currentP5Instance = new p5(function(p) {
   function keyPressedWaveInterference() {
     if (p.key === 'r' || p.key === 'R') {
       initializeWaveInterference();
+    } else if (p.key === 's' || p.key === 'S') {
+      p.saveCanvas('wave_interference_' + Date.now(), 'png');
     }
   }
 

@@ -112,6 +112,8 @@ window.currentP5Instance = new p5(function(p) {
       p.background(0, 0, 10);
       points = [];
       t = 0;
+    } else if (p.key === 's' || p.key === 'S') {
+      p.saveCanvas('lissajous_' + Date.now(), 'png');
     }
   }
 

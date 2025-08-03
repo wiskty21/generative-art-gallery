@@ -157,7 +157,7 @@ function keyPressedRecursiveTree(p) {
   if (p.key === ' ') {
     p.background(220, 20, 95);
   } else if (p.key === 's' || p.key === 'S') {
-    p.save('recursive_tree_' + p.frameCount + '.png');
+    p.saveCanvas('recursive_tree_' + Date.now(), 'png');
   }
 }
 
