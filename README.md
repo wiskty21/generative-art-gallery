@@ -2,7 +2,7 @@
 
 Beautiful generative art created with p5.js and Processing. Interactive visualizations including flow fields, wave interference patterns, and recursive trees.
 
-[Live Demo](https://yourusername.github.io/generative-art-gallery/) <!-- GitHub Pages用 -->
+[Live Demo](https://wiskty21.github.io/generative-art-gallery/)
 
 ## セットアップ方法
 
@@ -107,6 +107,10 @@ generative-art-gallery/
 - p5.js - Creative coding framework
 - Processing - Original sketches
 - Live Server - Development server
+
+## 🌐 GitHub Pages
+
+このプロジェクトはGitHub Pagesでホスティング可能です。セットアップ方法は[GitHub Pages セットアップガイド](docs/GITHUB_PAGES_SETUP.md)を参照してください。
 
 ## 📄 License
 
