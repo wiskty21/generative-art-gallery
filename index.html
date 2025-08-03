@@ -53,7 +53,7 @@
     </div>
 
     <!-- Art Selection -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
       <button onclick="loadSketch('flow_field')" class="group relative overflow-hidden rounded-xl bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-300 p-6 border-2 border-transparent hover:border-emerald-500 dark:hover:border-emerald-400">
         <div class="absolute inset-0 bg-gradient-to-br from-emerald-400 to-cyan-500 opacity-0 group-hover:opacity-10 transition-opacity"></div>
         <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">Flow Field Particles</h3>
@@ -70,6 +70,24 @@
         <div class="absolute inset-0 bg-gradient-to-br from-amber-400 to-orange-500 opacity-0 group-hover:opacity-10 transition-opacity"></div>
         <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">Recursive Tree</h3>
         <p class="text-gray-600 dark:text-gray-400 text-sm">風に揺れるフラクタルツリー</p>
+      </button>
+
+      <button onclick="loadSketch('mandelbrot')" class="group relative overflow-hidden rounded-xl bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-300 p-6 border-2 border-transparent hover:border-indigo-500 dark:hover:border-indigo-400">
+        <div class="absolute inset-0 bg-gradient-to-br from-indigo-400 to-blue-500 opacity-0 group-hover:opacity-10 transition-opacity"></div>
+        <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">Mandelbrot集合</h3>
+        <p class="text-gray-600 dark:text-gray-400 text-sm">複素数平面上の美しいフラクタル</p>
+      </button>
+
+      <button onclick="loadSketch('ornstein_uhlenbeck')" class="group relative overflow-hidden rounded-xl bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-300 p-6 border-2 border-transparent hover:border-rose-500 dark:hover:border-rose-400">
+        <div class="absolute inset-0 bg-gradient-to-br from-rose-400 to-red-500 opacity-0 group-hover:opacity-10 transition-opacity"></div>
+        <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">Ornstein-Uhlenbeck過程</h3>
+        <p class="text-gray-600 dark:text-gray-400 text-sm">確率微分方程式による軌道の可視化</p>
+      </button>
+
+      <button onclick="loadSketch('gray_scott')" class="group relative overflow-hidden rounded-xl bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-300 p-6 border-2 border-transparent hover:border-teal-500 dark:hover:border-teal-400">
+        <div class="absolute inset-0 bg-gradient-to-br from-teal-400 to-green-500 opacity-0 group-hover:opacity-10 transition-opacity"></div>
+        <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">Gray-Scott系</h3>
+        <p class="text-gray-600 dark:text-gray-400 text-sm">反応拡散系による自己組織化パターン</p>
       </button>
     </div>
 
@@ -142,7 +160,10 @@
       const infoText = {
         'flow_field': 'マウスクリックで新しいパーティクルを追加できます',
         'wave_interference': 'マウスクリックで波源を移動、スペースキーで再配置、Rキーでパラメータ変更',
-        'recursive_tree': 'マウスを動かして木の形を変更、スペースキーで再描画、Sキーで画像保存'
+        'recursive_tree': 'マウスを動かして木の形を変更、スペースキーで再描画、Sキーで画像保存',
+        'mandelbrot': 'マウスクリックでズーム、Rキーでリセット、Sキーで画像保存',
+        'ornstein_uhlenbeck': 'マウス位置でパラメータ調整、Rキーでリセット、Sキーで画像保存',
+        'gray_scott': 'マウスクリックで新しい種を追加、Rキーでリセット、Sキーで画像保存'
       };
       document.getElementById('sketch-info').textContent = infoText[sketchName] || '';
     }
@@ -195,6 +216,38 @@
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               枝の長さ比: マウスのY座標で調整
             </label>
+          </div>
+        `;
+      } else if (sketchName === 'mandelbrot') {
+        panel.classList.remove('hidden');
+        content.innerHTML = `
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              複素数平面の探索
+            </label>
+            <p class="text-sm text-gray-600 dark:text-gray-400">クリックして興味深い領域にズーム</p>
+          </div>
+        `;
+      } else if (sketchName === 'ornstein_uhlenbeck') {
+        panel.classList.remove('hidden');
+        content.innerHTML = `
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              回帰速度θ: マウスのX座標で調整
+            </label>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              ノイズ強度σ: マウスのY座標で調整
+            </label>
+          </div>
+        `;
+      } else if (sketchName === 'gray_scott') {
+        panel.classList.remove('hidden');
+        content.innerHTML = `
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              反応拡散パターン
+            </label>
+            <p class="text-sm text-gray-600 dark:text-gray-400">クリックして新しい反応核を追加</p>
           </div>
         `;
       } else {

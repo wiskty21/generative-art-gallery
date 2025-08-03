@@ -19,6 +19,29 @@ let windForce = 0;
 let maxRecursionDepth = 12; // 最大再帰深度を追加
 let treeRandomSeed = 0; // 木の構造を固定するためのシード
 
+// Mandelbrot用変数
+let mandelbrotZoom = 1;
+let mandelbrotCenterX = -0.7;
+let mandelbrotCenterY = 0.0;
+let maxIterations = 100;
+let mandelbrotPalette = [];
+
+// Ornstein-Uhlenbeck用変数
+let ouPaths = [];
+let ouNumPaths = 50;
+let ouTheta = 0.1; // 回帰速度
+let ouSigma = 0.3; // ノイズ強度
+let ouMu = 0; // 平均回帰値
+
+// Gray-Scott用変数
+let gsGrid = [];
+let gsNextGrid = [];
+let gsWidth, gsHeight;
+let gsFeedRate = 0.055;
+let gsKillRate = 0.062;
+let gsDiffusionA = 1.0;
+let gsDiffusionB = 0.5;
+
 function setup() {
   const canvas = createCanvas(800, 800);
   canvas.parent('canvas-container');
@@ -49,6 +72,28 @@ function initializeSketch() {
     colorMode(HSB, 360, 100, 100);
     background(220, 20, 95);
     treeRandomSeed = 42; // 固定シードを設定
+  } else if (currentMode === 'mandelbrot') {
+    colorMode(RGB, 255);
+    loadPixels();
+    initializeMandelbrotPalette();
+    drawMandelbrot();
+  } else if (currentMode === 'ornstein_uhlenbeck') {
+    colorMode(HSB, 360, 100, 100);
+    background(0);
+    ouPaths = [];
+    for (let i = 0; i < ouNumPaths; i++) {
+      ouPaths.push({
+        x: width / 2,
+        y: height / 2,
+        value: 0,
+        trail: []
+      });
+    }
+  } else if (currentMode === 'gray_scott') {
+    colorMode(RGB, 255);
+    gsWidth = 200;
+    gsHeight = 200;
+    initializeGrayScott();
   }
 }
 
@@ -65,6 +110,12 @@ function draw() {
     drawWaveInterference();
   } else if (currentMode === 'recursive_tree') {
     drawRecursiveTree();
+  } else if (currentMode === 'mandelbrot') {
+    // Mandelbrotは静的なので描画しない
+  } else if (currentMode === 'ornstein_uhlenbeck') {
+    drawOrnsteinUhlenbeck();
+  } else if (currentMode === 'gray_scott') {
+    drawGrayScott();
   }
 }
 
@@ -171,6 +222,24 @@ function mousePressed() {
     
     waves[closestWave].x = mouseX;
     waves[closestWave].y = mouseY;
+  } else if (currentMode === 'mandelbrot') {
+    // マンデルブロ集合をズーム
+    mandelbrotZoom *= 2;
+    mandelbrotCenterX += (mouseX - width/2) / (width/4 * mandelbrotZoom);
+    mandelbrotCenterY += (mouseY - height/2) / (height/4 * mandelbrotZoom);
+    drawMandelbrot();
+  } else if (currentMode === 'gray_scott') {
+    // Gray-Scottに新しい種を追加
+    let gsX = floor(map(mouseX, 0, width, 0, gsWidth));
+    let gsY = floor(map(mouseY, 0, height, 0, gsHeight));
+    for (let i = gsX - 5; i < gsX + 5; i++) {
+      for (let j = gsY - 5; j < gsY + 5; j++) {
+        if (i >= 0 && i < gsWidth && j >= 0 && j < gsHeight) {
+          gsGrid[i][j].b = 1;
+          gsGrid[i][j].a = 0;
+        }
+      }
+    }
   }
 }
 
@@ -179,6 +248,10 @@ function mouseMoved() {
     angle = map(mouseX, 0, width, 10, 45);
     // lengthRatioの範囲を制限して、再帰が深くなりすぎないようにする
     lengthRatio = map(mouseY, 0, height, 0.5, 0.7); // 0.8から0.7に減少
+  } else if (currentMode === 'ornstein_uhlenbeck') {
+    // パラメータをマウス位置で調整
+    ouTheta = map(mouseX, 0, width, 0.01, 0.5);
+    ouSigma = map(mouseY, 0, height, 0.1, 1.0);
   }
 }
 
@@ -201,6 +274,33 @@ function keyPressed() {
       background(220, 20, 95);
     } else if (key === 's' || key === 'S') {
       save('recursive_tree_' + frameCount + '.png');
+    }
+  } else if (currentMode === 'mandelbrot') {
+    if (key === 'r' || key === 'R') {
+      mandelbrotZoom = 1;
+      mandelbrotCenterX = -0.7;
+      mandelbrotCenterY = 0.0;
+      drawMandelbrot();
+    } else if (key === 's' || key === 'S') {
+      save('mandelbrot_' + frameCount + '.png');
+    }
+  } else if (currentMode === 'ornstein_uhlenbeck') {
+    if (key === 'r' || key === 'R') {
+      for (let path of ouPaths) {
+        path.x = width / 2;
+        path.y = height / 2;
+        path.value = 0;
+        path.trail = [];
+      }
+      background(0);
+    } else if (key === 's' || key === 'S') {
+      save('ornstein_uhlenbeck_' + frameCount + '.png');
+    }
+  } else if (currentMode === 'gray_scott') {
+    if (key === 'r' || key === 'R') {
+      initializeGrayScott();
+    } else if (key === 's' || key === 'S') {
+      save('gray_scott_' + frameCount + '.png');
     }
   }
 }
@@ -304,4 +404,178 @@ function drawBranch(len, depth = 0, treeId = 'main') {
     ellipse(0, 0, leafSize, leafSize);
     pop();
   }
+}
+
+// Mandelbrot集合の描画
+function initializeMandelbrotPalette() {
+  mandelbrotPalette = [];
+  for (let i = 0; i < maxIterations; i++) {
+    let t = i / maxIterations;
+    mandelbrotPalette.push({
+      r: floor(9 * (1-t) * t * t * t * 255),
+      g: floor(15 * (1-t) * (1-t) * t * t * 255),
+      b: floor(8.5 * (1-t) * (1-t) * (1-t) * t * 255)
+    });
+  }
+}
+
+function mandelbrotIterations(x, y) {
+  let cx = (x - width/2) / (width/4 * mandelbrotZoom) + mandelbrotCenterX;
+  let cy = (y - height/2) / (height/4 * mandelbrotZoom) + mandelbrotCenterY;
+  
+  let zx = 0, zy = 0;
+  let iterations = 0;
+  
+  while (zx*zx + zy*zy < 4 && iterations < maxIterations) {
+    let temp = zx*zx - zy*zy + cx;
+    zy = 2*zx*zy + cy;
+    zx = temp;
+    iterations++;
+  }
+  
+  return iterations;
+}
+
+function drawMandelbrot() {
+  for (let x = 0; x < width; x++) {
+    for (let y = 0; y < height; y++) {
+      let iterations = mandelbrotIterations(x, y);
+      let colorIndex = iterations % mandelbrotPalette.length;
+      let col = mandelbrotPalette[colorIndex];
+      
+      let index = (x + y * width) * 4;
+      pixels[index] = col.r;
+      pixels[index + 1] = col.g;
+      pixels[index + 2] = col.b;
+      pixels[index + 3] = 255;
+    }
+  }
+  updatePixels();
+}
+
+// Ornstein-Uhlenbeck過程の描画
+function drawOrnsteinUhlenbeck() {
+  // 背景を少しずつフェード
+  fill(0, 10);
+  noStroke();
+  rect(0, 0, width, height);
+  
+  for (let i = 0; i < ouPaths.length; i++) {
+    let path = ouPaths[i];
+    
+    // Ornstein-Uhlenbeck過程の更新
+    let drift = -ouTheta * path.value;
+    let diffusion = ouSigma * randomGaussian();
+    path.value += drift + diffusion;
+    
+    // 位置の更新
+    path.x += random(-2, 2);
+    path.y += path.value * 5;
+    
+    // 境界でラップ
+    if (path.x < 0) path.x = width;
+    if (path.x > width) path.x = 0;
+    if (path.y < 0) path.y = height;
+    if (path.y > height) path.y = 0;
+    
+    // トレイルに追加
+    path.trail.push({x: path.x, y: path.y});
+    if (path.trail.length > 100) {
+      path.trail.shift();
+    }
+    
+    // トレイルの描画
+    if (path.trail.length > 1) {
+      for (let j = 1; j < path.trail.length; j++) {
+        let alpha = map(j, 0, path.trail.length, 0, 1);
+        let hue = map(path.value, -3, 3, 240, 360);
+        stroke(hue, 80, 90, alpha * 100);
+        strokeWeight(2);
+        line(path.trail[j-1].x, path.trail[j-1].y, path.trail[j].x, path.trail[j].y);
+      }
+    }
+  }
+}
+
+// Gray-Scott反応拡散系の初期化と描画
+function initializeGrayScott() {
+  gsGrid = [];
+  gsNextGrid = [];
+  
+  for (let x = 0; x < gsWidth; x++) {
+    gsGrid[x] = [];
+    gsNextGrid[x] = [];
+    for (let y = 0; y < gsHeight; y++) {
+      gsGrid[x][y] = {a: 1, b: 0};
+      gsNextGrid[x][y] = {a: 1, b: 0};
+    }
+  }
+  
+  // 中央に種を配置
+  for (let i = gsWidth/2 - 10; i < gsWidth/2 + 10; i++) {
+    for (let j = gsHeight/2 - 10; j < gsHeight/2 + 10; j++) {
+      if (i >= 0 && i < gsWidth && j >= 0 && j < gsHeight) {
+        gsGrid[i][j].b = 1;
+        gsGrid[i][j].a = 0;
+      }
+    }
+  }
+}
+
+function drawGrayScott() {
+  // Gray-Scott反応拡散の計算
+  for (let x = 1; x < gsWidth - 1; x++) {
+    for (let y = 1; y < gsHeight - 1; y++) {
+      let a = gsGrid[x][y].a;
+      let b = gsGrid[x][y].b;
+      
+      // ラプラシアンの計算
+      let laplaceA = gsGrid[x-1][y].a + gsGrid[x+1][y].a + 
+                     gsGrid[x][y-1].a + gsGrid[x][y+1].a - 4*a;
+      let laplaceB = gsGrid[x-1][y].b + gsGrid[x+1][y].b + 
+                     gsGrid[x][y-1].b + gsGrid[x][y+1].b - 4*b;
+      
+      // Gray-Scott方程式
+      let reaction = a * b * b;
+      let newA = a + (gsDiffusionA * laplaceA - reaction + gsFeedRate * (1 - a));
+      let newB = b + (gsDiffusionB * laplaceB + reaction - (gsKillRate + gsFeedRate) * b);
+      
+      gsNextGrid[x][y].a = constrain(newA, 0, 1);
+      gsNextGrid[x][y].b = constrain(newB, 0, 1);
+    }
+  }
+  
+  // グリッドの更新
+  let temp = gsGrid;
+  gsGrid = gsNextGrid;
+  gsNextGrid = temp;
+  
+  // 描画
+  loadPixels();
+  for (let x = 0; x < gsWidth; x++) {
+    for (let y = 0; y < gsHeight; y++) {
+      let b = gsGrid[x][y].b;
+      let intensity = floor(b * 255);
+      
+      // 画面サイズに拡大
+      let screenX = floor(map(x, 0, gsWidth, 0, width));
+      let screenY = floor(map(y, 0, gsHeight, 0, height));
+      let scale = floor(width / gsWidth);
+      
+      for (let dx = 0; dx < scale; dx++) {
+        for (let dy = 0; dy < scale; dy++) {
+          let px = screenX + dx;
+          let py = screenY + dy;
+          if (px < width && py < height) {
+            let index = (px + py * width) * 4;
+            pixels[index] = intensity;
+            pixels[index + 1] = intensity/2;
+            pixels[index + 2] = intensity/4;
+            pixels[index + 3] = 255;
+          }
+        }
+      }
+    }
+  }
+  updatePixels();
 }
