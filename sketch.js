@@ -14,8 +14,10 @@ let waves = [];
 // Recursive Tree用変数
 let angle = 25;
 let lengthRatio = 0.67;
-let minLength = 2;
+let minLength = 4; // 2から4に増加して再帰の深さを制限
 let windForce = 0;
+let maxRecursionDepth = 12; // 最大再帰深度を追加
+let treeRandomSeed = 0; // 木の構造を固定するためのシード
 
 function setup() {
   const canvas = createCanvas(800, 800);
@@ -46,6 +48,7 @@ function initializeSketch() {
   } else if (currentMode === 'recursive_tree') {
     colorMode(HSB, 360, 100, 100);
     background(220, 20, 95);
+    treeRandomSeed = 42; // 固定シードを設定
   }
 }
 
@@ -120,25 +123,31 @@ function drawRecursiveTree() {
   
   windForce = sin(frameCount * 0.01) * 10;
   
+  // 毎フレーム同じランダムシードを使用して点滅を防ぐ
+  randomSeed(treeRandomSeed);
+  
+  // メインの木
   push();
   translate(width/2, height);
   stroke(30, 70, 40);
   strokeWeight(8);
-  branch(120);
+  drawBranch(120, 0, 'main');
   pop();
   
+  // 左の木
   push();
   translate(width/4, height);
   stroke(30, 70, 40);
   strokeWeight(6);
-  branch(80);
+  drawBranch(80, 0, 'left');
   pop();
   
+  // 右の木
   push();
   translate(3*width/4, height);
   stroke(30, 70, 40);
   strokeWeight(6);
-  branch(80);
+  drawBranch(80, 0, 'right');
   pop();
 }
 
@@ -168,7 +177,8 @@ function mousePressed() {
 function mouseMoved() {
   if (currentMode === 'recursive_tree') {
     angle = map(mouseX, 0, width, 10, 45);
-    lengthRatio = map(mouseY, 0, height, 0.5, 0.8);
+    // lengthRatioの範囲を制限して、再帰が深くなりすぎないようにする
+    lengthRatio = map(mouseY, 0, height, 0.5, 0.7); // 0.8から0.7に減少
   }
 }
 
@@ -233,39 +243,65 @@ class Particle {
   }
 }
 
-// 再帰的な枝描画
-function branch(len) {
+// 再帰的な枝描画（改善版）
+function drawBranch(len, depth = 0, treeId = 'main') {
+  // 最大深度に達したら終了
+  if (depth > maxRecursionDepth) {
+    return;
+  }
+  
+  // 幹を描画
   line(0, 0, 0, -len);
-  translate(0, -len);
   
   if (len > minLength) {
+    push(); // 現在の状態を保存
+    translate(0, -len); // 枝の先端に移動
+    
+    // 枝の太さを徐々に細く
     strokeWeight(map(len, minLength, 120, 0.5, 8));
     
+    // 色を徐々に変化（茶色から緑へ）
     if (len < 30) {
-      stroke(120, 80, 60);
+      stroke(120, 80, 60); // 緑
     } else {
-      stroke(30, 70, 40);
+      stroke(30, 70, 40); // 茶色
     }
     
+    // 右の枝
     push();
     rotate(radians(angle + windForce * (1 - len/120)));
-    branch(len * lengthRatio);
+    drawBranch(len * lengthRatio, depth + 1, treeId);
     pop();
     
+    // 左の枝
     push();
     rotate(radians(-angle + windForce * (1 - len/120)));
-    branch(len * lengthRatio);
+    drawBranch(len * lengthRatio, depth + 1, treeId);
     pop();
     
-    if (random(1) < 0.1) {
+    // 固定された3つ目の枝を追加（深度が浅い時のみ）
+    // ハッシュを使って決定論的にランダム性を作る
+    let branchHash = (depth * 17 + len * 23 + treeId.charCodeAt(0)) % 100;
+    if (depth < 8 && branchHash < 10) {
       push();
-      rotate(radians(random(-angle/2, angle/2)));
-      branch(len * lengthRatio * 0.8);
+      let extraAngle = ((branchHash * 13) % 60) - 30; // -30から30度の範囲
+      rotate(radians(extraAngle));
+      drawBranch(len * lengthRatio * 0.8, depth + 1, treeId);
       pop();
     }
+    
+    pop(); // 状態を復元
   } else {
+    // 葉っぱを描画（固定された色と大きさ）
+    push();
+    translate(0, -len);
     noStroke();
-    fill(random(100, 140), 80, 80, 150);
-    ellipse(0, 0, random(5, 15), random(5, 15));
+    // 決定論的な色と大きさを計算
+    let leafHash = (len * 37 + depth * 41 + treeId.charCodeAt(0)) % 100;
+    let leafHue = 100 + (leafHash % 40); // 100-140の範囲
+    let leafSize = 5 + (leafHash % 10); // 5-15の範囲
+    fill(leafHue, 80, 80, 150);
+    ellipse(0, 0, leafSize, leafSize);
+    pop();
   }
 }

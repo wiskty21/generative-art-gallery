@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generative Art Gallery</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          animation: {
+            'fade-in': 'fadeIn 0.5s ease-in-out',
+            'slide-up': 'slideUp 0.3s ease-out',
+          },
+          keyframes: {
+            fadeIn: {
+              '0%': { opacity: '0' },
+              '100%': { opacity: '1' },
+            },
+            slideUp: {
+              '0%': { transform: 'translateY(10px)', opacity: '0' },
+              '100%': { transform: 'translateY(0)', opacity: '1' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
+  <div class="container mx-auto px-4 py-8 max-w-6xl">
+    <!-- Header -->
+    <header class="text-center mb-8">
+      <h1 class="text-4xl md:text-5xl font-bold text-gray-800 dark:text-gray-100 mb-2 animate-fade-in">
+        Generative Art Gallery
+      </h1>
+      <p class="text-gray-600 dark:text-gray-400 animate-slide-up">
+        インタラクティブなジェネラティブアート作品集
+      </p>
+    </header>
+
+    <!-- Dark Mode Toggle -->
+    <div class="flex justify-end mb-6">
+      <button onclick="toggleDarkMode()" class="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">
+        <svg class="w-6 h-6 text-gray-800 dark:text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path class="dark:hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+          <path class="hidden dark:block" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Art Selection -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+      <button onclick="loadSketch('flow_field')" class="group relative overflow-hidden rounded-xl bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-300 p-6 border-2 border-transparent hover:border-emerald-500 dark:hover:border-emerald-400">
+        <div class="absolute inset-0 bg-gradient-to-br from-emerald-400 to-cyan-500 opacity-0 group-hover:opacity-10 transition-opacity"></div>
+        <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">Flow Field Particles</h3>
+        <p class="text-gray-600 dark:text-gray-400 text-sm">ノイズベースの流れ場に沿って動くパーティクル</p>
+      </button>
+
+      <button onclick="loadSketch('wave_interference')" class="group relative overflow-hidden rounded-xl bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-300 p-6 border-2 border-transparent hover:border-purple-500 dark:hover:border-purple-400">
+        <div class="absolute inset-0 bg-gradient-to-br from-purple-400 to-pink-500 opacity-0 group-hover:opacity-10 transition-opacity"></div>
+        <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">Wave Interference</h3>
+        <p class="text-gray-600 dark:text-gray-400 text-sm">複数の波源からの干渉パターン</p>
+      </button>
+
+      <button onclick="loadSketch('recursive_tree')" class="group relative overflow-hidden rounded-xl bg-white dark:bg-gray-800 shadow-lg hover:shadow-xl transition-all duration-300 p-6 border-2 border-transparent hover:border-amber-500 dark:hover:border-amber-400">
+        <div class="absolute inset-0 bg-gradient-to-br from-amber-400 to-orange-500 opacity-0 group-hover:opacity-10 transition-opacity"></div>
+        <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">Recursive Tree</h3>
+        <p class="text-gray-600 dark:text-gray-400 text-sm">風に揺れるフラクタルツリー</p>
+      </button>
+    </div>
+
+    <!-- Canvas Container -->
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-4 md:p-8 mb-6 animate-fade-in">
+      <div id="canvas-container" class="flex justify-center items-center min-h-[400px]">
+        <p class="text-gray-500 dark:text-gray-400">上のボタンから作品を選択してください</p>
+      </div>
+    </div>
+
+    <!-- Info Panel -->
+    <div class="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 mb-6 border border-blue-200 dark:border-blue-800">
+      <div class="flex items-start space-x-3">
+        <svg class="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+        </svg>
+        <div>
+          <h4 class="font-semibold text-blue-900 dark:text-blue-300 mb-1">操作方法</h4>
+          <p id="sketch-info" class="text-blue-800 dark:text-blue-200 text-sm">作品を選択すると操作方法が表示されます</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Parameters Panel (Hidden by default) -->
+    <div id="parameters-panel" class="hidden bg-gray-50 dark:bg-gray-800 rounded-xl p-6 mb-6 border border-gray-200 dark:border-gray-700">
+      <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">パラメータ調整</h3>
+      <div id="parameters-content" class="space-y-4">
+        <!-- Dynamic parameters will be inserted here -->
+      </div>
+    </div>
+  </div>
+
+  <script src="sketch.js"></script>
+  
+  <script>
+    // Dark mode toggle
+    function toggleDarkMode() {
+      document.documentElement.classList.toggle('dark');
+      localStorage.setItem('darkMode', document.documentElement.classList.contains('dark'));
+    }
+
+    // Check for saved dark mode preference
+    if (localStorage.getItem('darkMode') === 'true' || 
+        (!localStorage.getItem('darkMode') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    }
+
+    // Enhanced loadSketch function
+    function loadSketch(sketchName) {
+      changeMode(sketchName);
+      updateInfo(sketchName);
+      updateActiveButton(sketchName);
+      showParameters(sketchName);
+    }
+
+    // Update active button styling
+    function updateActiveButton(sketchName) {
+      const buttons = document.querySelectorAll('button[onclick^="loadSketch"]');
+      buttons.forEach(button => {
+        if (button.getAttribute('onclick').includes(sketchName)) {
+          button.classList.add('ring-2', 'ring-offset-2', 'ring-gray-400', 'dark:ring-gray-600');
+        } else {
+          button.classList.remove('ring-2', 'ring-offset-2', 'ring-gray-400', 'dark:ring-gray-600');
+        }
+      });
+    }
+
+    // Update info text
+    function updateInfo(sketchName) {
+      const infoText = {
+        'flow_field': 'マウスクリックで新しいパーティクルを追加できます',
+        'wave_interference': 'マウスクリックで波源を移動、スペースキーで再配置、Rキーでパラメータ変更',
+        'recursive_tree': 'マウスを動かして木の形を変更、スペースキーで再描画、Sキーで画像保存'
+      };
+      document.getElementById('sketch-info').textContent = infoText[sketchName] || '';
+    }
+
+    // Show parameters panel
+    function showParameters(sketchName) {
+      const panel = document.getElementById('parameters-panel');
+      const content = document.getElementById('parameters-content');
+      
+      // Clear previous content
+      content.innerHTML = '';
+      
+      if (sketchName === 'flow_field') {
+        panel.classList.remove('hidden');
+        content.innerHTML = `
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              ノイズスケール: <span id="noise-value">${noiseScale}</span>
+            </label>
+            <input type="range" min="0.001" max="0.1" step="0.001" value="${noiseScale}" 
+                   onchange="noiseScale = parseFloat(this.value); document.getElementById('noise-value').textContent = this.value"
+                   class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              最大速度: <span id="speed-value">2</span>
+            </label>
+            <input type="range" min="0.5" max="5" step="0.1" value="2" 
+                   onchange="particles.forEach(p => p.maxSpeed = parseFloat(this.value)); document.getElementById('speed-value').textContent = this.value"
+                   class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
+          </div>
+        `;
+      } else if (sketchName === 'wave_interference') {
+        panel.classList.remove('hidden');
+        content.innerHTML = `
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              波の数: ${numWaves}
+            </label>
+            <p class="text-sm text-gray-600 dark:text-gray-400">Rキーを押してパラメータをランダム化</p>
+          </div>
+        `;
+      } else if (sketchName === 'recursive_tree') {
+        panel.classList.remove('hidden');
+        content.innerHTML = `
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              枝の角度: マウスのX座標で調整
+            </label>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              枝の長さ比: マウスのY座標で調整
+            </label>
+          </div>
+        `;
+      } else {
+        panel.classList.add('hidden');
+      }
+    }
+
+    // Initialize with first sketch on load
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        loadSketch('flow_field');
+      }, 100);
+    });
+  </script>
+</body>
+</html>
