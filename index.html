@@ -179,7 +179,7 @@
         'recursive_tree': 'マウスを動かして木の形を変更、スペースキーで再描画、Sキーで画像保存',
         'harmonic_waves': 'マウス位置で周波数と位相を調整、Rキーでリセット、Sキーで画像保存',
         'polar_rose': 'マウス位置でバラの形を変更、Rキーでリセット、Sキーで画像保存',
-        'noise_field_sculpture': 'マウス位置でノイズスケールを調整、Rキーでリセット、Sキーで画像保存',
+        'noise_field_sculpture': 'マウスで地形の詳細度と等高線数を調整、Rキーでリセット、Sキーで画像保存',
         'mandelbrot': 'マウスクリックでズーム、Rキーでリセット、Sキーで画像保存',
         'ornstein_uhlenbeck': 'マウス位置でパラメータ調整、Rキーでリセット、Sキーで画像保存',
         'gray_scott': 'マウスクリックで新しい種を追加、Rキーでリセット、Sキーで画像保存'
@@ -288,7 +288,7 @@
         content.innerHTML = `
           <div>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              ノイズスケール: マウスのX座標で調整
+              地形の詳細度: マウスのX座標で調整（左=広域、右=詳細）
             </label>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               等高線の数: マウスのY座標で調整

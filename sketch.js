@@ -300,7 +300,7 @@ function mouseMoved() {
     prK = map(mouseX, 0, width, 3, 8); // 範囲を狭くして安定化
     prRotationSpeed = map(mouseY, 0, height, 0.001, 0.008); // 回転速度を全体的に遅くする
   } else if (currentMode === 'noise_field_sculpture') {
-    nfsNoiseScale = map(mouseX, 0, width, 0.003, 0.03);
+    nfsNoiseScale = map(mouseX, 0, width, 0.03, 0.003); // 左右を逆にしてズーム感を直感的に
     nfsNumContours = floor(map(mouseY, 0, height, 5, 20));
   }
 }
