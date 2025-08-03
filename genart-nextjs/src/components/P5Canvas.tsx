@@ -50,8 +50,16 @@ export default function P5Canvas({ mode }: P5CanvasProps) {
       switch (mode) {
         case 'gray_scott':
           return '/sketches/gray-scott.js'
+        case 'flow_field':
+          return '/sketches/flow-field.js'
+        case 'wave_interference':
+          return '/sketches/wave-interference.js'
+        case 'recursive_tree':
+          return '/sketches/recursive-tree.js'
+        case 'mandelbrot':
+          return '/sketches/mandelbrot.js'
         default:
-          return null // For now, only gray-scott is implemented
+          return null // For now, 5 artworks are implemented
       }
     }
 
