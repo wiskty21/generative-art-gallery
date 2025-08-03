@@ -14,7 +14,7 @@ var nfsNumContours = 12;
 var nfsContourSpacing = 20;
 
 // p5.js instance mode to avoid global conflicts
-new p5(function(p) {
+window.currentP5Instance = new p5(function(p) {
   p.setup = function() {
     console.log('Noise Field Sculpture setup called');
     const canvasContainer = document.getElementById('p5-canvas-container');

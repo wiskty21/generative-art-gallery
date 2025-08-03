@@ -16,7 +16,7 @@ var maxRecursionDepth = 12;
 var treeRandomSeed = 42;
 
 // p5.js instance mode to avoid global conflicts
-new p5(function(p) {
+window.currentP5Instance = new p5(function(p) {
   p.setup = function() {
     console.log('Recursive Tree setup called');
     const canvasContainer = document.getElementById('p5-canvas-container');

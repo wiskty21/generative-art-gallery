@@ -8,7 +8,7 @@ if (typeof window.waveInterferenceSketch !== 'undefined') {
 }
 
 // p5.js instance mode to avoid global conflicts
-new p5(function(p) {
+window.currentP5Instance = new p5(function(p) {
   // Wave Interference variables - instance scope
   let time = 0;
   let numWaves = 3;

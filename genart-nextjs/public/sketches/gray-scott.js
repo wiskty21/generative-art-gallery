@@ -8,7 +8,7 @@ if (typeof window.grayScottSketch !== 'undefined') {
 }
 
 // p5.js instance mode to avoid global conflicts
-new p5(function(p) {
+window.currentP5Instance = new p5(function(p) {
   // Gray-Scott variables - instance scope
   let gsGrid = [];
   let gsNextGrid = [];

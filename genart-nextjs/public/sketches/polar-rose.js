@@ -15,7 +15,7 @@ var prNumRoses = 6; // バラの数を少し減らす
 var prScale = 200;
 
 // p5.js instance mode to avoid global conflicts
-new p5(function(p) {
+window.currentP5Instance = new p5(function(p) {
   p.setup = function() {
     console.log('Polar Rose setup called');
     const canvasContainer = document.getElementById('p5-canvas-container');
