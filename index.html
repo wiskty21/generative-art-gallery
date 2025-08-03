@@ -85,8 +85,11 @@
       </button>
     </div>
 
-    <!-- Art Selection -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+    <!-- Main Layout: Sidebar + Content -->
+    <div class="flex flex-col lg:flex-row gap-8">
+      <!-- Left Sidebar: Art Selection -->
+      <div class="lg:w-80 lg:flex-shrink-0">
+        <div class="grid grid-cols-1 gap-4">
       <button onclick="loadSketch('flow_field')" class="group relative overflow-hidden rounded-2xl bg-white/70 dark:bg-gray-800/70 backdrop-blur-md shadow-lg hover:shadow-2xl transition-all duration-500 p-6 border border-emerald-200/50 dark:border-emerald-700/50 hover:border-emerald-400 dark:hover:border-emerald-500 hover:scale-105 transform">
         <div class="absolute inset-0 bg-gradient-to-br from-emerald-400 to-cyan-500 opacity-0 group-hover:opacity-20 transition-all duration-500"></div>
         <div class="absolute -top-10 -right-10 w-20 h-20 bg-emerald-400 rounded-full opacity-10 group-hover:opacity-20 group-hover:scale-110 transition-all duration-500"></div>
@@ -203,9 +206,12 @@
           </div>
         </div>
       </button>
-    </div>
+        </div>
+      </div>
 
-    <!-- Canvas Container -->
+      <!-- Right Content: Canvas and Panels -->
+      <div class="flex-1">
+        <!-- Canvas Container -->
     <div class="relative bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-3xl shadow-2xl p-6 md:p-8 mb-8 border border-white/20 dark:border-gray-700/50 animate-scale-in overflow-hidden">
       <div class="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-pink-500/5 pointer-events-none"></div>
       <div id="canvas-container" class="flex justify-center items-center min-h-[500px] relative z-10 rounded-2xl overflow-hidden bg-black/5 dark:bg-white/5"></div>
@@ -238,6 +244,8 @@
       </div>
       <div id="parameters-content" class="space-y-4">
         <!-- Dynamic parameters will be inserted here -->
+      </div>
+        </div>
       </div>
     </div>
   </div>
