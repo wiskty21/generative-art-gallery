@@ -5,8 +5,14 @@ declare global {
     updateWaveInterferenceParameter?: (param: string, value: number) => void
     updateRecursiveTreeParameter?: (param: string, value: number) => void
     updateMandelbrotParameter?: (param: string, value: number) => void
+    updateOrnsteinUhlenbeckParameter?: (param: string, value: number) => void
+    updateHarmonicWavesParameter?: (param: string, value: number) => void
+    updatePolarRoseParameter?: (param: string, value: number) => void
+    updateNoiseFieldSculptureParameter?: (param: string, value: number) => void
     p5?: any
     remove?: () => void
+    currentP5Instance?: any
+    gc?: () => void
   }
 }
 

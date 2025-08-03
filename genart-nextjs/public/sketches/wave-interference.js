@@ -7,13 +7,14 @@ if (typeof window.waveInterferenceSketch !== 'undefined') {
   }
 }
 
-// Wave Interference variables
-var time = 0;
-var numWaves = 3;
-var waves = [];
-
 // p5.js instance mode to avoid global conflicts
 new p5(function(p) {
+  // Wave Interference variables - instance scope
+  let time = 0;
+  let numWaves = 3;
+  let waves = [];
+  let waveSpeed = 0.1;
+
   p.setup = function() {
     console.log('Wave Interference setup called');
     const canvasContainer = document.getElementById('p5-canvas-container');
@@ -28,120 +29,101 @@ new p5(function(p) {
     canvas.parent('p5-canvas-container');
     
     p.pixelDensity(1);
-    initializeWaveInterference(p);
+    initializeWaveInterference();
     console.log('Wave Interference initialized');
   }
 
   p.draw = function() {
-    drawWaveInterference(p);
+    drawWaveInterference();
   }
 
   p.mousePressed = function() {
     if (p.mouseX >= 0 && p.mouseX <= p.width && p.mouseY >= 0 && p.mouseY <= p.height) {
-      mousePressedWaveInterference(p);
+      mousePressedWaveInterference();
     }
   }
 
   p.keyPressed = function() {
-    keyPressedWaveInterference(p);
+    keyPressedWaveInterference();
+  }
+
+  // Helper functions within the p5 instance scope
+  function initializeWaveInterference() {
+    p.colorMode(p.HSB, 360, 100, 100);
+    p.background(0);
+    time = 0;
+    waves = [];
+    
+    for (let i = 0; i < numWaves; i++) {
+      let x = p.random(p.width);
+      let y = p.random(p.height);
+      waves.push({x: x, y: y, amplitude: p.random(30, 50), frequency: p.random(0.05, 0.2)});
+    }
+  }
+
+  function drawWaveInterference() {
+    p.background(0);
+    p.loadPixels();
+    
+    let pixelDens = p.pixelDensity();
+    let halfWidth = p.width * pixelDens;
+    let halfHeight = p.height * pixelDens;
+    
+    for (let x = 0; x < halfWidth; x += 4) {
+      for (let y = 0; y < halfHeight; y += 4) {
+        let totalAmplitude = 0;
+        
+        for (let wave of waves) {
+          let distance = p.dist(x / pixelDens, y / pixelDens, wave.x, wave.y);
+          let waveValue = wave.amplitude * p.sin(distance * wave.frequency - time * waveSpeed);
+          totalAmplitude += waveValue;
+        }
+        
+        let hue = p.map(totalAmplitude, -numWaves * 50, numWaves * 50, 0, 360);
+        let brightness = p.map(p.abs(totalAmplitude), 0, numWaves * 50, 30, 100);
+        let col = p.color(hue, 70, brightness);
+        
+        for (let dx = 0; dx < 4; dx++) {
+          for (let dy = 0; dy < 4; dy++) {
+            let idx = 4 * ((y + dy) * halfWidth + (x + dx));
+            p.pixels[idx] = p.red(col);
+            p.pixels[idx + 1] = p.green(col);
+            p.pixels[idx + 2] = p.blue(col);
+            p.pixels[idx + 3] = 255;
+          }
+        }
+      }
+    }
+    
+    p.updatePixels();
+    time += 5;
+  }
+
+  function mousePressedWaveInterference() {
+    waves.push({x: p.mouseX, y: p.mouseY, amplitude: p.random(30, 50), frequency: p.random(0.05, 0.2)});
+  }
+
+  function keyPressedWaveInterference() {
+    if (p.key === 'r' || p.key === 'R') {
+      initializeWaveInterference();
+    }
+  }
+
+  // パラメータ更新関数（Next.jsから呼び出し可能）
+  window.updateWaveInterferenceParameter = function(param, value) {
+    switch(param) {
+      case 'numWaves':
+        numWaves = value;
+        initializeWaveInterference();
+        break;
+      case 'waveSpeed':
+        waveSpeed = value;
+        break;
+    }
   }
 });
 
-function initializeWaveInterference(p) {
-  waves = [];
-  p.colorMode(p.HSB, 360, 100, 100);
-  for (let i = 0; i < numWaves; i++) {
-    waves.push({
-      x: p.random(p.width),
-      y: p.random(p.height),
-      amplitude: p.random(50, 150),
-      frequency: p.random(0.02, 0.05),
-      phase: p.random(p.TWO_PI)
-    });
-  }
-}
-
-function drawWaveInterference(p) {
-  p.colorMode(p.HSB, 360, 100, 100);
-  p.background(0);
-  
-  let resolution = 4;
-  for (let x = 0; x < p.width; x += resolution) {
-    for (let y = 0; y < p.height; y += resolution) {
-      let totalAmplitude = 0;
-      
-      for (let w of waves) {
-        let distance = p.dist(x, y, w.x, w.y);
-        let amplitude = w.amplitude * p.sin(distance * w.frequency - time + w.phase);
-        amplitude *= p.map(distance, 0, p.width, 1, 0.1);
-        totalAmplitude += amplitude;
-      }
-      
-      let hue = p.map(totalAmplitude, -200, 200, 0, 300);
-      let brightness = p.map(p.abs(totalAmplitude), 0, 200, 30, 100);
-      
-      p.fill(hue, 70, brightness);
-      p.noStroke();
-      p.rect(x, y, resolution, resolution);
-    }
-  }
-  
-  for (let w of waves) {
-    p.fill(0, 0, 100);
-    p.ellipse(w.x, w.y, 10, 10);
-  }
-  
-  time += 0.1;
-}
-
-function mousePressedWaveInterference(p) {
-  let minDist = Infinity;
-  let closestWave = 0;
-  
-  for (let i = 0; i < numWaves; i++) {
-    let d = p.dist(p.mouseX, p.mouseY, waves[i].x, waves[i].y);
-    if (d < minDist) {
-      minDist = d;
-      closestWave = i;
-    }
-  }
-  
-  waves[closestWave].x = p.mouseX;
-  waves[closestWave].y = p.mouseY;
-}
-
-function keyPressedWaveInterference(p) {
-  if (p.key === ' ') {
-    for (let w of waves) {
-      w.x = p.random(p.width);
-      w.y = p.random(p.height);
-    }
-  } else if (p.key === 'r' || p.key === 'R') {
-    for (let w of waves) {
-      w.frequency = p.random(0.02, 0.05);
-      w.amplitude = p.random(50, 150);
-    }
-  }
-}
-
-// パラメータ更新関数（Next.jsから呼び出し可能）
-function updateWaveInterferenceParameter(param, value) {
-  switch(param) {
-    case 'numWaves':
-      numWaves = value;
-      // Re-initialize waves with new count
-      if (typeof window.p5 !== 'undefined') {
-        initializeWaveInterference(window.p5);
-      }
-      break;
-    case 'waveSpeed':
-      // Adjust time increment speed
-      break;
-  }
-}
-
 // グローバルに公開
 if (typeof window !== 'undefined') {
-  window.updateWaveInterferenceParameter = updateWaveInterferenceParameter;
   window.waveInterferenceSketch = true; // Mark this sketch as loaded
 }
