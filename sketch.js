@@ -71,18 +71,23 @@ function setup() {
   const canvas = createCanvas(size, size);
   canvas.parent('canvas-container');
   
+  // ピクセル密度を固定（高DPIディスプレイ対応）
+  pixelDensity(1);
+  
   initializeSketch();
 }
 
 // ウィンドウリサイズ時の処理
 function windowResized() {
   const container = document.getElementById('canvas-container');
-  const size = min(container.clientWidth - 20, container.clientHeight - 20, 800);
-  resizeCanvas(size, size);
-  
-  // モードを再初期化
-  background(0);
-  initializeSketch();
+  if (container) {
+    const size = min(container.clientWidth - 20, container.clientHeight - 20, 800);
+    resizeCanvas(size, size);
+    
+    // モードを再初期化
+    background(0);
+    initializeSketch();
+  }
 }
 
 function initializeSketch() {
@@ -110,7 +115,7 @@ function initializeSketch() {
     treeRandomSeed = 42; // 固定シードを設定
   } else if (currentMode === 'mandelbrot') {
     colorMode(RGB, 255);
-    loadPixels();
+    background(0); // 黒背景でクリア
     initializeMandelbrotPalette();
     drawMandelbrot();
   } else if (currentMode === 'ornstein_uhlenbeck') {
@@ -283,6 +288,7 @@ function mousePressed() {
     mandelbrotZoom *= 2;
     mandelbrotCenterX += (mouseX - width/2) / (width/4 * mandelbrotZoom);
     mandelbrotCenterY += (mouseY - height/2) / (height/4 * mandelbrotZoom);
+    background(0); // 描画前に背景をクリア
     drawMandelbrot();
   } else if (currentMode === 'gray_scott') {
     // Gray-Scottに新しい種を追加
@@ -345,6 +351,7 @@ function keyPressed() {
       mandelbrotZoom = 1;
       mandelbrotCenterX = -0.7;
       mandelbrotCenterY = 0.0;
+      background(0); // 描画前に背景をクリア
       drawMandelbrot();
     } else if (key === 's' || key === 'S') {
       save('mandelbrot_' + frameCount + '.png');
