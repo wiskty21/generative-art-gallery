@@ -54,8 +54,8 @@ let hwAmplitude = 80;
 // Polar Rose用変数
 let prTime = 0;
 let prK = 5; // 花びらの数に関連
-let prRotationSpeed = 0.01;
-let prNumRoses = 8;
+let prRotationSpeed = 0.003; // 回転速度を遅くする
+let prNumRoses = 6; // バラの数を少し減らす
 let prScale = 200;
 
 // Noise Field Sculpture用変数
@@ -297,8 +297,8 @@ function mouseMoved() {
     hwFreqX = map(mouseX, 0, width, 0.005, 0.05);
     hwFreqY = map(mouseY, 0, height, 0.005, 0.05);
   } else if (currentMode === 'polar_rose') {
-    prK = map(mouseX, 0, width, 2, 12);
-    prRotationSpeed = map(mouseY, 0, height, 0.005, 0.03);
+    prK = map(mouseX, 0, width, 3, 8); // 範囲を狭くして安定化
+    prRotationSpeed = map(mouseY, 0, height, 0.001, 0.008); // 回転速度を全体的に遅くする
   } else if (currentMode === 'noise_field_sculpture') {
     nfsNoiseScale = map(mouseX, 0, width, 0.003, 0.03);
     nfsNumContours = floor(map(mouseY, 0, height, 5, 20));
@@ -755,8 +755,8 @@ function drawHarmonicWaves() {
 
 // Polar Rose（極座標バラ）の描画
 function drawPolarRose() {
-  // 背景をフェード
-  fill(0, 30);
+  // 背景をゆっくりフェード
+  fill(0, 15);
   noStroke();
   rect(0, 0, width, height);
   
@@ -764,19 +764,21 @@ function drawPolarRose() {
   translate(width / 2, height / 2);
   
   for (let i = 0; i < prNumRoses; i++) {
-    let hue = (i * 45 + prTime * 50) % 360;
-    let k = prK + sin(prTime + i) * 2;
-    let scale = prScale * (0.7 + 0.3 * sin(prTime * 0.7 + i));
+    // 色の変化をゆっくりにする
+    let hue = (i * 60 + prTime * 20) % 360;
+    let k = prK + sin(prTime * 0.5 + i) * 1.5; // kの変化をゆっくりにする
+    let scale = prScale * (0.8 + 0.2 * sin(prTime * 0.3 + i)); // スケール変化をゆっくりにする
     
-    stroke(hue, 80, 90, 120);
-    strokeWeight(2);
+    stroke(hue, 70, 85, 100);
+    strokeWeight(1.5);
     noFill();
     
     push();
     rotate(prTime * prRotationSpeed + i * TWO_PI / prNumRoses);
     
     beginShape();
-    for (let theta = 0; theta < TWO_PI * k; theta += 0.05) {
+    // より滑らかな描画のためにステップを小さくする
+    for (let theta = 0; theta < TWO_PI * k; theta += 0.02) {
       let r = sin(k * theta) * scale;
       let x = r * cos(theta);
       let y = r * sin(theta);
@@ -789,48 +791,64 @@ function drawPolarRose() {
   
   pop();
   
-  prTime += 0.015;
+  prTime += 0.008; // 時間の進行をさらに遅くする
 }
 
 // Noise Field Sculpture（ノイズ地形）の描画
 function drawNoiseFieldSculpture() {
   background(220, 15, 95);
   
-  // 等高線を描画
+  // より見やすい等高線を描画
   for (let level = 0; level < nfsNumContours; level++) {
     let targetHeight = level * nfsContourSpacing;
-    let hue = (200 + level * 15) % 360;
-    let sat = 60 + level * 3;
+    let hue = (180 + level * 20) % 360;
+    let sat = 70 + level * 2;
+    let brightness = 60 + level * 2;
     
-    stroke(hue, sat, 70, 150);
-    strokeWeight(1);
+    stroke(hue, sat, brightness);
+    strokeWeight(2 + level * 0.2); // レベルに応じて線を太くする
     noFill();
     
-    // マーチングスクエア風のアプローチで等高線を描画
-    for (let x = 0; x < width - 10; x += 10) {
-      for (let y = 0; y < height - 10; y += 10) {
-        let noiseVal1 = noise(x * nfsNoiseScale, y * nfsNoiseScale, nfsZOffset) * 255;
-        let noiseVal2 = noise((x + 10) * nfsNoiseScale, y * nfsNoiseScale, nfsZOffset) * 255;
-        let noiseVal3 = noise(x * nfsNoiseScale, (y + 10) * nfsNoiseScale, nfsZOffset) * 255;
-        let noiseVal4 = noise((x + 10) * nfsNoiseScale, (y + 10) * nfsNoiseScale, nfsZOffset) * 255;
+    // より滑らかな等高線描画
+    beginShape();
+    noFill();
+    for (let x = 0; x < width; x += 5) {
+      for (let y = 0; y < height; y += 5) {
+        let noiseVal = noise(x * nfsNoiseScale, y * nfsNoiseScale, nfsZOffset) * 255;
         
-        // 等高線の交点を見つけて線を描画
+        // 等高線の近似値で線を描画
+        if (abs(noiseVal - targetHeight) < 8) {
+          vertex(x, y);
+        }
+      }
+    }
+    endShape();
+    
+    // 補完的なライン描画
+    for (let x = 0; x < width - 5; x += 5) {
+      for (let y = 0; y < height - 5; y += 5) {
+        let noiseVal1 = noise(x * nfsNoiseScale, y * nfsNoiseScale, nfsZOffset) * 255;
+        let noiseVal2 = noise((x + 5) * nfsNoiseScale, y * nfsNoiseScale, nfsZOffset) * 255;
+        let noiseVal3 = noise(x * nfsNoiseScale, (y + 5) * nfsNoiseScale, nfsZOffset) * 255;
+        
+        // 水平線
         if ((noiseVal1 < targetHeight && noiseVal2 > targetHeight) ||
             (noiseVal1 > targetHeight && noiseVal2 < targetHeight)) {
           let t = (targetHeight - noiseVal1) / (noiseVal2 - noiseVal1);
-          let px = x + t * 10;
-          point(px, y);
+          let px = x + t * 5;
+          line(px - 2, y, px + 2, y);
         }
         
+        // 垂直線
         if ((noiseVal1 < targetHeight && noiseVal3 > targetHeight) ||
             (noiseVal1 > targetHeight && noiseVal3 < targetHeight)) {
           let t = (targetHeight - noiseVal1) / (noiseVal3 - noiseVal1);
-          let py = y + t * 10;
-          point(x, py);
+          let py = y + t * 5;
+          line(x, py - 2, x, py + 2);
         }
       }
     }
   }
   
-  nfsZOffset += 0.005;
+  nfsZOffset += 0.002; // 動きを少し遅くする
 }
