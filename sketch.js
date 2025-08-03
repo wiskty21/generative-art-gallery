@@ -798,57 +798,65 @@ function drawPolarRose() {
 function drawNoiseFieldSculpture() {
   background(220, 15, 95);
   
-  // より見やすい等高線を描画
+  // 滑らかな等高線を描画
   for (let level = 0; level < nfsNumContours; level++) {
     let targetHeight = level * nfsContourSpacing;
-    let hue = (180 + level * 20) % 360;
-    let sat = 70 + level * 2;
-    let brightness = 60 + level * 2;
+    let hue = (160 + level * 25) % 360;
+    let sat = 80 + level * 2;
+    let brightness = 70 + level * 2;
     
-    stroke(hue, sat, brightness);
-    strokeWeight(2 + level * 0.2); // レベルに応じて線を太くする
+    stroke(hue, sat, brightness, 180);
+    strokeWeight(1.5 + level * 0.15);
     noFill();
     
-    // より滑らかな等高線描画
-    beginShape();
-    noFill();
-    for (let x = 0; x < width; x += 5) {
-      for (let y = 0; y < height; y += 5) {
-        let noiseVal = noise(x * nfsNoiseScale, y * nfsNoiseScale, nfsZOffset) * 255;
+    // マーチングスクエア法による滑らかな等高線
+    let res = 8; // 解像度
+    for (let x = 0; x < width - res; x += res) {
+      for (let y = 0; y < height - res; y += res) {
+        // 四角形の4つの角のノイズ値
+        let val1 = noise(x * nfsNoiseScale, y * nfsNoiseScale, nfsZOffset) * 255;
+        let val2 = noise((x + res) * nfsNoiseScale, y * nfsNoiseScale, nfsZOffset) * 255;
+        let val3 = noise((x + res) * nfsNoiseScale, (y + res) * nfsNoiseScale, nfsZOffset) * 255;
+        let val4 = noise(x * nfsNoiseScale, (y + res) * nfsNoiseScale, nfsZOffset) * 255;
         
-        // 等高線の近似値で線を描画
-        if (abs(noiseVal - targetHeight) < 8) {
-          vertex(x, y);
-        }
-      }
-    }
-    endShape();
-    
-    // 補完的なライン描画
-    for (let x = 0; x < width - 5; x += 5) {
-      for (let y = 0; y < height - 5; y += 5) {
-        let noiseVal1 = noise(x * nfsNoiseScale, y * nfsNoiseScale, nfsZOffset) * 255;
-        let noiseVal2 = noise((x + 5) * nfsNoiseScale, y * nfsNoiseScale, nfsZOffset) * 255;
-        let noiseVal3 = noise(x * nfsNoiseScale, (y + 5) * nfsNoiseScale, nfsZOffset) * 255;
+        // 等高線の交点を見つけて滑らかに接続
+        let points = [];
         
-        // 水平線
-        if ((noiseVal1 < targetHeight && noiseVal2 > targetHeight) ||
-            (noiseVal1 > targetHeight && noiseVal2 < targetHeight)) {
-          let t = (targetHeight - noiseVal1) / (noiseVal2 - noiseVal1);
-          let px = x + t * 5;
-          line(px - 2, y, px + 2, y);
+        // 上辺
+        if ((val1 <= targetHeight && val2 > targetHeight) || (val1 > targetHeight && val2 <= targetHeight)) {
+          let t = (targetHeight - val1) / (val2 - val1);
+          points.push({ x: x + t * res, y: y });
         }
         
-        // 垂直線
-        if ((noiseVal1 < targetHeight && noiseVal3 > targetHeight) ||
-            (noiseVal1 > targetHeight && noiseVal3 < targetHeight)) {
-          let t = (targetHeight - noiseVal1) / (noiseVal3 - noiseVal1);
-          let py = y + t * 5;
-          line(x, py - 2, x, py + 2);
+        // 右辺
+        if ((val2 <= targetHeight && val3 > targetHeight) || (val2 > targetHeight && val3 <= targetHeight)) {
+          let t = (targetHeight - val2) / (val3 - val2);
+          points.push({ x: x + res, y: y + t * res });
+        }
+        
+        // 下辺
+        if ((val3 <= targetHeight && val4 > targetHeight) || (val3 > targetHeight && val4 <= targetHeight)) {
+          let t = (targetHeight - val3) / (val4 - val3);
+          points.push({ x: x + res - t * res, y: y + res });
+        }
+        
+        // 左辺
+        if ((val4 <= targetHeight && val1 > targetHeight) || (val4 > targetHeight && val1 <= targetHeight)) {
+          let t = (targetHeight - val4) / (val1 - val4);
+          points.push({ x: x, y: y + res - t * res });
+        }
+        
+        // 点を線で結ぶ
+        if (points.length >= 2) {
+          for (let i = 0; i < points.length - 1; i += 2) {
+            if (points[i + 1]) {
+              line(points[i].x, points[i].y, points[i + 1].x, points[i + 1].y);
+            }
+          }
         }
       }
     }
   }
   
-  nfsZOffset += 0.002; // 動きを少し遅くする
+  nfsZOffset += 0.002;
 }
