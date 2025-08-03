@@ -24,7 +24,7 @@ export default function P5Canvas({ mode }: P5CanvasProps) {
       }
 
       // Remove current p5 instance cache - more aggressive cleanup
-      if (typeof window.currentP5Instance !== 'undefined') {
+      if (typeof window.currentP5Instance !== 'undefined' && window.currentP5Instance) {
         try {
           if (typeof window.currentP5Instance.remove === 'function') {
             window.currentP5Instance.remove()
@@ -46,10 +46,11 @@ export default function P5Canvas({ mode }: P5CanvasProps) {
         // Clean up any p5 instances that might be running
         const possibleP5Instances = ['_p5instance', '_instance', 'p5Instance']
         possibleP5Instances.forEach(name => {
-          if (typeof window[name] !== 'undefined') {
+          if (typeof window[name] !== 'undefined' && window[name]) {
             try {
-              if (typeof window[name].remove === 'function') {
-                window[name].remove()
+              const instance = window[name] as { remove?: () => void }
+              if (typeof instance.remove === 'function') {
+                instance.remove()
               }
               window[name] = undefined
               delete window[name]
@@ -114,10 +115,14 @@ export default function P5Canvas({ mode }: P5CanvasProps) {
           // Sketch-specific markers and functions
           'grayScottSketch', 'harmonicWavesSketch', 'waveInterferenceSketch', 'mandelbrotSketch',
           'ornsteinUhlenbeckSketch', 'polarRoseSketch', 'noiseFieldSculptureSketch', 'recursiveTreeSketch',
+          'perlinLandscapeSketch', 'boidsSketch', 'lissajousSketch',
           // Sketch control functions
           'updateHarmonicWavesParameter', 'updateWaveInterferenceParameter', 'updateGrayScottParameter',
           'updateMandelbrotParameter', 'updateOrnsteinUhlenbeckParameter', 'updatePolarRoseParameter',
-          'updateNoiseFieldSculptureParameter', 'updateRecursiveTreeParameter'
+          'updateNoiseFieldSculptureParameter', 'updateRecursiveTreeParameter',
+          'updatePerlinLandscapeParameter', 'updateBoidsParameter', 'updateLissajousParameter',
+          // Class definitions
+          'Boid'
         ]
         
         allP5Globals.forEach(varName => {
@@ -180,8 +185,14 @@ export default function P5Canvas({ mode }: P5CanvasProps) {
           return '/sketches/polar-rose.js'
         case 'noise_field_sculpture':
           return '/sketches/noise-field-sculpture.js'
+        case 'perlin_landscape':
+          return '/sketches/perlin-landscape.js'
+        case 'boids':
+          return '/sketches/boids.js'
+        case 'lissajous':
+          return '/sketches/lissajous.js'
         default:
-          return null // All 9 artworks are now implemented
+          return null // All 12 artworks are now implemented
       }
     }
 

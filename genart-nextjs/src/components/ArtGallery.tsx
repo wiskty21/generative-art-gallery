@@ -4,7 +4,7 @@ import { useState } from 'react'
 import P5Canvas from './P5Canvas'
 import ControlPanel from './ControlPanel'
 
-export type ArtMode = 'flow_field' | 'wave_interference' | 'recursive_tree' | 'mandelbrot' | 'ornstein_uhlenbeck' | 'gray_scott' | 'harmonic_waves' | 'polar_rose' | 'noise_field_sculpture'
+export type ArtMode = 'flow_field' | 'wave_interference' | 'recursive_tree' | 'mandelbrot' | 'ornstein_uhlenbeck' | 'gray_scott' | 'harmonic_waves' | 'polar_rose' | 'noise_field_sculpture' | 'perlin_landscape' | 'boids' | 'lissajous'
 
 const artworks = [
   { id: 'flow_field', name: 'Flow Field' },
@@ -15,7 +15,10 @@ const artworks = [
   { id: 'gray_scott', name: 'Gray-Scott' },
   { id: 'harmonic_waves', name: 'Harmonic Waves' },
   { id: 'polar_rose', name: 'Polar Rose' },
-  { id: 'noise_field_sculpture', name: 'Noise Field Sculpture' }
+  { id: 'noise_field_sculpture', name: 'Noise Field Sculpture' },
+  { id: 'perlin_landscape', name: 'Perlin Landscape' },
+  { id: 'boids', name: 'Boids Flocking' },
+  { id: 'lissajous', name: 'Lissajous Curves' }
 ] as const
 
 export default function ArtGallery() {
