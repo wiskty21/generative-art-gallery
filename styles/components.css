@@ -3,9 +3,9 @@
 /* Layout Components */
 .main-container {
   width: 100%;
-  max-width: 1536px; /* max-w-screen-2xl */
+  max-width: 1920px;
   margin: 0 auto;
-  padding: 8px 16px 12px; /* px-2 py-2 sm:py-3 */
+  padding: 8px 16px 12px;
 }
 
 @media (min-width: 640px) {
@@ -20,38 +20,85 @@
   }
 }
 
-.sidebar-layout {
+/* 3-Column Layout */
+.three-column-layout {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  height: calc(100vh - 180px); /* Account for header */
 }
 
 @media (min-width: 1024px) {
-  .sidebar-layout {
+  .three-column-layout {
     flex-direction: row;
+    gap: 20px;
   }
 }
 
-.sidebar {
+/* Left Sidebar */
+.left-sidebar {
   width: 100%;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.dark .left-sidebar {
+  background: rgba(31, 41, 55, 0.7);
+  border-color: rgba(75, 85, 99, 0.5);
 }
 
 @media (min-width: 1024px) {
-  .sidebar {
-    width: 320px; /* w-80 */
+  .left-sidebar {
+    width: 320px;
     flex-shrink: 0;
-    min-width: 0;
+    overflow-y: auto;
   }
 }
 
-@media (min-width: 1280px) {
-  .sidebar {
-    width: 384px; /* w-96 */
-  }
-}
-
-.content-area {
+/* Center Content */
+.center-content {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+/* Right Sidebar */
+.right-sidebar {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.dark .right-sidebar {
+  background: rgba(31, 41, 55, 0.7);
+  border-color: rgba(75, 85, 99, 0.5);
+}
+
+@media (min-width: 1024px) {
+  .right-sidebar {
+    width: 320px;
+    flex-shrink: 0;
+    overflow-y: auto;
+  }
+}
+
+.sidebar-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #1f2937;
+}
+
+.dark .sidebar-title {
+  color: #f3f4f6;
 }
 
 /* Header Components */
@@ -186,6 +233,14 @@
   }
 }
 
+/* 3x3 Button Grid for Sidebar */
+.button-grid-3x3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  width: 100%;
+}
+
 .art-button {
   position: relative;
   overflow: hidden;
@@ -205,6 +260,25 @@
   .art-button {
     padding: 16px;
   }
+}
+
+/* Compact buttons for 3x3 grid */
+.button-grid-3x3 .art-button {
+  min-height: 80px;
+  padding: 8px;
+}
+
+.button-grid-3x3 .art-button-title {
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.button-grid-3x3 .art-button-desc {
+  display: none;
+}
+
+.button-grid-3x3 .art-button-indicator {
+  margin-top: 8px;
 }
 
 .art-button:hover {
@@ -517,4 +591,95 @@
   .art-button-desc {
     font-size: 12px;
   }
+}
+
+/* Parameters Panel */
+.parameters-container {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  padding: 16px;
+  min-height: 300px;
+}
+
+.dark .parameters-container {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.parameters-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.empty-state {
+  color: #6b7280;
+  text-align: center;
+  padding: 40px 20px;
+  font-style: italic;
+}
+
+.dark .empty-state {
+  color: #9ca3af;
+}
+
+/* Parameter Controls */
+.parameter-control {
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.dark .parameter-control {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.parameter-label {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #374151;
+}
+
+.dark .parameter-label {
+  color: #e5e7eb;
+}
+
+.parameter-slider {
+  width: 100%;
+  height: 4px;
+  background: #e5e7eb;
+  border-radius: 2px;
+  outline: none;
+  -webkit-appearance: none;
+}
+
+.dark .parameter-slider {
+  background: #374151;
+}
+
+.parameter-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  background: #3b82f6;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.parameter-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: #3b82f6;
+  cursor: pointer;
+  border-radius: 50%;
+  border: none;
+}
+
+.parameter-value {
+  display: inline-block;
+  margin-left: 8px;
+  font-size: 14px;
+  font-family: monospace;
+  color: #3b82f6;
 }
